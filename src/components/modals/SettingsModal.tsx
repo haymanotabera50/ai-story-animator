@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Key, ShieldCheck, Check, Sparkles, Heart } from 'lucide-react';
+import { X, Key, ShieldCheck, Check, Sparkles } from 'lucide-react';
 import { EthiopianCross } from '@/components/common/EthiopianCross';
 
 interface SettingsModalProps {
@@ -38,32 +38,32 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
-      <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-purple-950/40 p-4 backdrop-blur-md">
+      <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-pink-200 bg-white p-6 shadow-2xl">
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 hover:bg-zinc-800 hover:text-white"
+          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-purple-400 hover:bg-pink-50 hover:text-purple-950"
         >
           <X className="h-4 w-4" />
         </button>
 
         <div className="mb-4 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-pink-100 text-pink-600 ring-1 ring-pink-300">
             <EthiopianCross size={20} />
           </div>
           <div>
-            <h3 className="text-base font-bold text-white">Ahadu Studio Settings</h3>
-            <p className="text-xs text-zinc-400">አሐዱ • 100% Free AI Animation</p>
+            <h3 className="text-base font-black text-purple-950">Ahadu Studio Settings</h3>
+            <p className="text-xs font-semibold text-pink-600">አሐዱ • 100% Free AI Animation</p>
           </div>
         </div>
 
         {/* Zero cost guarantee badge */}
-        <div className="mb-5 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 text-xs text-zinc-300">
+        <div className="mb-5 rounded-2xl border border-pink-200 bg-pink-50/70 p-4 text-xs text-purple-900">
           <div className="flex items-start gap-2.5">
-            <Sparkles className="h-4 w-4 shrink-0 text-amber-400 mt-0.5" />
+            <Sparkles className="h-4 w-4 shrink-0 text-pink-500 mt-0.5" />
             <div>
-              <p className="font-semibold text-amber-300">Completely Free • Zero Cost (ከክፍያ ነጻ)</p>
-              <p className="mt-1 text-zinc-400 leading-relaxed">
+              <p className="font-bold text-pink-700">Completely Free • Zero Cost (ከክፍያ ነጻ)</p>
+              <p className="mt-1 text-purple-800/80 leading-relaxed font-medium">
                 Ahadu comes with unlimited free Flux illustration generation, in-browser speech narration, authentic Ethiopian pentatonic audio synthesis, and HD video export. No subscription or credit card needed!
               </p>
             </div>
@@ -72,7 +72,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
 
         <div className="space-y-4">
           <div>
-            <label className="mb-1.5 block text-xs font-semibold text-zinc-300">
+            <label className="mb-1.5 block text-xs font-bold text-purple-950">
               Google Gemini API Key (Optional / አማራጭ)
             </label>
             <input
@@ -80,9 +80,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
               value={geminiKey}
               onChange={(e) => setGeminiKey(e.target.value)}
               placeholder="AIzaSy..."
-              className="w-full rounded-xl border border-zinc-800 bg-zinc-950 p-3 text-xs text-zinc-200 placeholder-zinc-600 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+              className="w-full rounded-xl border border-pink-200 bg-purple-50/40 p-3 text-xs font-medium text-purple-950 placeholder-purple-400 focus:bg-white focus:border-pink-400 focus:outline-none focus:ring-1 focus:ring-pink-400"
             />
-            <p className="mt-1 text-[11px] text-zinc-500">
+            <p className="mt-1 text-[11px] text-purple-600 font-medium">
               Optional: Adds custom Gemini scriptwriting. If left empty, Ahadu’s built-in story engine works automatically.
             </p>
           </div>
@@ -90,13 +90,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
           <div className="flex items-center justify-end gap-3 pt-2">
             <button
               onClick={onClose}
-              className="rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2 text-xs font-medium text-zinc-400 hover:bg-zinc-800"
+              className="rounded-xl border border-pink-200 bg-white px-4 py-2 text-xs font-bold text-purple-700 hover:bg-pink-50"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
-              className="flex items-center gap-1.5 rounded-xl bg-amber-500 px-4 py-2 text-xs font-bold text-zinc-950 hover:bg-amber-400 active:scale-95"
+              className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 px-4 py-2 text-xs font-bold text-white shadow-md shadow-purple-500/20 hover:opacity-95 active:scale-95"
             >
               {savedSuccess ? (
                 <>
@@ -116,4 +116,3 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
     </div>
   );
 };
-

@@ -12,11 +12,9 @@ import {
   Maximize2,
   Download,
   Film,
-  Sparkles,
 } from 'lucide-react';
 import { StoryScene, BgMusicMood, CameraMotion, AspectRatio } from '@/types/animation';
 import { speakNarration, ambientSoundtrack } from '@/lib/audio-engine';
-import { EthiopianCross } from '@/components/common/EthiopianCross';
 
 interface EmbeddedVideoPlayerProps {
   scenes: StoryScene[];
@@ -25,7 +23,7 @@ interface EmbeddedVideoPlayerProps {
   aspectRatio: AspectRatio;
   onOpenCinema: () => void;
   onOpenExport: () => void;
-  autoPlayTrigger?: number; // increments when a new story is generated
+  autoPlayTrigger?: number;
 }
 
 export const EmbeddedVideoPlayer: React.FC<EmbeddedVideoPlayerProps> = ({
@@ -50,7 +48,6 @@ export const EmbeddedVideoPlayer: React.FC<EmbeddedVideoPlayerProps> = ({
 
   const currentScene = scenes[currentIdx] || scenes[0];
 
-  // Auto-play whenever a new story is created
   useEffect(() => {
     if (autoPlayTrigger > 0 && scenes.length > 0) {
       setCurrentIdx(0);
@@ -62,7 +59,6 @@ export const EmbeddedVideoPlayer: React.FC<EmbeddedVideoPlayerProps> = ({
     }
   }, [autoPlayTrigger]);
 
-  // Handle scene playback changes
   useEffect(() => {
     if (!isPlaying || !currentScene) return;
 
@@ -204,23 +200,23 @@ export const EmbeddedVideoPlayer: React.FC<EmbeddedVideoPlayerProps> = ({
   };
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/60 p-5 shadow-2xl backdrop-blur-xl sm:p-7">
+    <div className="relative overflow-hidden rounded-3xl border border-pink-200/90 bg-white/80 p-5 shadow-xl shadow-pink-500/5 backdrop-blur-xl sm:p-7">
       {/* Player Header Bar */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-pink-100 text-pink-600 ring-1 ring-pink-300">
             <Film className="h-5 w-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+              <span className="text-xs font-bold uppercase tracking-wider text-pink-600">
                 Ahadu Live Animation Screen (የቀጥታ አኒሜሽን)
               </span>
-              <span className="rounded-md bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-400">
+              <span className="rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-bold text-purple-700">
                 ● Video Ready
               </span>
             </div>
-            <h2 className="text-lg font-extrabold text-white sm:text-xl">{title}</h2>
+            <h2 className="text-lg font-black text-purple-950 sm:text-xl">{title}</h2>
           </div>
         </div>
 
@@ -228,7 +224,7 @@ export const EmbeddedVideoPlayer: React.FC<EmbeddedVideoPlayerProps> = ({
         <div className="flex items-center gap-2.5">
           <button
             onClick={onOpenExport}
-            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 px-4 py-2 text-xs font-bold text-zinc-950 shadow-lg shadow-amber-500/20 transition-all hover:scale-105 active:scale-95 sm:text-sm"
+            className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-violet-600 px-4 py-2 text-xs font-bold text-white shadow-md shadow-purple-500/20 transition-all hover:opacity-95 hover:scale-105 active:scale-95 sm:text-sm"
           >
             <Download className="h-4 w-4" />
             <span>Download Video File (Free)</span>
@@ -236,7 +232,7 @@ export const EmbeddedVideoPlayer: React.FC<EmbeddedVideoPlayerProps> = ({
 
           <button
             onClick={onOpenCinema}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-zinc-700 bg-zinc-800 text-zinc-300 transition-colors hover:border-amber-500 hover:text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-pink-200 bg-white text-purple-700 shadow-sm transition-colors hover:border-pink-300 hover:bg-pink-50 hover:text-purple-950"
             title="Open Fullscreen Cinema Theater"
           >
             <Maximize2 className="h-4 w-4" />
@@ -248,15 +244,15 @@ export const EmbeddedVideoPlayer: React.FC<EmbeddedVideoPlayerProps> = ({
       <div className="mx-auto flex justify-center">
         <div
           ref={containerRef}
-          className={`relative overflow-hidden rounded-2xl border border-zinc-800 bg-black shadow-2xl ${getAspectClass()}`}
+          className={`relative overflow-hidden rounded-2xl border-2 border-pink-200 bg-black shadow-2xl ${getAspectClass()}`}
         >
           {/* Top Segmented Scene Progress */}
-          <div className="absolute top-0 z-30 flex w-full flex-col bg-gradient-to-b from-black/80 to-transparent p-3.5">
+          <div className="absolute top-0 z-30 flex w-full flex-col bg-gradient-to-b from-black/85 to-transparent p-3.5">
             <div className="flex items-center gap-1.5">
               {scenes.map((s, idx) => (
-                <div key={s.id} className="relative h-1 flex-1 overflow-hidden rounded-full bg-white/20">
+                <div key={s.id} className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-white/25">
                   <div
-                    className="h-full bg-amber-400 transition-all"
+                    className="h-full bg-gradient-to-r from-pink-400 to-purple-400 transition-all"
                     style={{
                       width:
                         idx < currentIdx
@@ -270,10 +266,10 @@ export const EmbeddedVideoPlayer: React.FC<EmbeddedVideoPlayerProps> = ({
               ))}
             </div>
             <div className="mt-2 flex items-center justify-between text-[11px] text-zinc-300">
-              <span className="font-semibold text-amber-400">
+              <span className="font-bold text-pink-300">
                 Scene {currentIdx + 1} of {scenes.length}: {currentScene.title}
               </span>
-              <span className="font-mono text-zinc-400 font-serif">ቅኝት: {bgMusic}</span>
+              <span className="font-mono text-purple-200 font-serif">ቅኝት: {bgMusic}</span>
             </div>
           </div>
 
@@ -297,8 +293,8 @@ export const EmbeddedVideoPlayer: React.FC<EmbeddedVideoPlayerProps> = ({
                 onClick={handleTogglePlay}
                 className="group absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/40 backdrop-blur-[2px] transition-all hover:bg-black/30"
               >
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-500 text-zinc-950 shadow-2xl shadow-amber-500/40 transition-transform group-hover:scale-110">
-                  <Play className="h-8 w-8 fill-zinc-950 ml-1" />
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-tr from-pink-500 to-purple-600 text-white shadow-2xl shadow-purple-500/50 transition-transform group-hover:scale-110">
+                  <Play className="h-8 w-8 fill-white ml-1" />
                 </div>
                 <span className="mt-3 text-sm font-bold text-white drop-shadow">
                   Click to Play Video with Sound (ተጫወት)
@@ -309,7 +305,7 @@ export const EmbeddedVideoPlayer: React.FC<EmbeddedVideoPlayerProps> = ({
             {/* Subtitles Box */}
             {currentScene.narration && (
               <div className="absolute bottom-16 left-1/2 z-20 w-11/12 -translate-x-1/2 sm:w-4/5">
-                <div className="rounded-xl border border-white/10 bg-black/80 px-4 py-2.5 text-center backdrop-blur-md shadow-2xl">
+                <div className="rounded-xl border border-pink-500/30 bg-black/85 px-4 py-2.5 text-center backdrop-blur-md shadow-2xl">
                   <p className="text-xs font-semibold leading-relaxed text-zinc-100 sm:text-sm">
                     {currentScene.narration}
                   </p>
@@ -325,7 +321,7 @@ export const EmbeddedVideoPlayer: React.FC<EmbeddedVideoPlayerProps> = ({
               className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-white backdrop-blur-md transition-colors hover:bg-white/20"
               title={isMuted ? 'Unmute Sound' : 'Mute Sound'}
             >
-              {isMuted ? <VolumeX className="h-4 w-4 text-red-400" /> : <Volume2 className="h-4 w-4 text-amber-400" />}
+              {isMuted ? <VolumeX className="h-4 w-4 text-pink-400" /> : <Volume2 className="h-4 w-4 text-purple-300" />}
             </button>
 
             <div className="flex items-center gap-2">
@@ -339,9 +335,9 @@ export const EmbeddedVideoPlayer: React.FC<EmbeddedVideoPlayerProps> = ({
 
               <button
                 onClick={handleTogglePlay}
-                className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-zinc-950 shadow-lg shadow-amber-500/30 transition-transform hover:scale-105 active:scale-95"
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-pink-500 to-purple-600 text-white shadow-lg shadow-purple-500/30 transition-transform hover:scale-105 active:scale-95"
               >
-                {isPlaying ? <Pause className="h-5 w-5 fill-zinc-950" /> : <Play className="h-5 w-5 fill-zinc-950 ml-0.5" />}
+                {isPlaying ? <Pause className="h-5 w-5 fill-white" /> : <Play className="h-5 w-5 fill-white ml-0.5" />}
               </button>
 
               <button

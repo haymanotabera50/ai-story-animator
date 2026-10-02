@@ -62,3 +62,4 @@ export async function preloadImage(src: string, timeoutMs: number = 8000): Promi
     img.src = src;
   });
 }
+

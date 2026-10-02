@@ -59,7 +59,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
           particleCount: 90,
           spread: 80,
           origin: { y: 0.6 },
-          colors: ['#f59e0b', '#10b981', '#ef4444', '#ffffff'],
+          colors: ['#f472b6', '#c084fc', '#a855f7', '#fb7185', '#ffffff'],
         });
       } catch {}
 
@@ -80,34 +80,34 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
-      <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-purple-950/40 p-4 backdrop-blur-md">
+      <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-pink-200 bg-white p-6 shadow-2xl">
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 hover:bg-zinc-800 hover:text-white"
+          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-purple-400 hover:bg-pink-50 hover:text-purple-950"
         >
           <X className="h-4 w-4" />
         </button>
 
         <div className="flex flex-col items-center text-center">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20">
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-100 text-pink-600 ring-1 ring-pink-300">
             {isExporting ? (
               <Loader2 className="h-7 w-7 animate-spin" />
             ) : downloadUrl ? (
-              <CheckCircle className="h-7 w-7 text-emerald-400" />
+              <CheckCircle className="h-7 w-7 text-emerald-500" />
             ) : (
               <Film className="h-7 w-7" />
             )}
           </div>
 
-          <h3 className="text-lg font-bold text-white">
+          <h3 className="text-lg font-black text-purple-950">
             {isExporting
               ? 'Rendering Ahadu Video (Free)'
               : downloadUrl
               ? 'Animation Downloaded! (እንኳን ደስ አለዎት)'
               : 'Export Video'}
           </h3>
-          <p className="mt-1 text-xs text-zinc-400">
+          <p className="mt-1 text-xs font-medium text-purple-700/80">
             {isExporting
               ? progress.statusText
               : downloadUrl
@@ -118,13 +118,13 @@ export const ExportModal: React.FC<ExportModalProps> = ({
           {/* Progress Bar */}
           {isExporting && (
             <div className="mt-6 w-full space-y-2">
-              <div className="h-2.5 w-full overflow-hidden rounded-full bg-zinc-800">
+              <div className="h-2.5 w-full overflow-hidden rounded-full bg-purple-100">
                 <div
-                  className="h-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-400 transition-all duration-300"
+                  className="h-full bg-gradient-to-r from-pink-500 via-purple-500 to-violet-600 transition-all duration-300"
                   style={{ width: `${progress.progressPercent}%` }}
                 />
               </div>
-              <div className="flex justify-between text-[11px] text-zinc-500">
+              <div className="flex justify-between text-[11px] font-bold text-purple-600">
                 <span>{progress.progressPercent}%</span>
                 <span>
                   Scene {progress.currentScene} of {progress.totalScenes}
@@ -135,7 +135,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
           {/* Error Message */}
           {error && (
-            <div className="mt-4 flex items-center gap-2 rounded-xl bg-red-500/10 p-3 text-xs text-red-400 ring-1 ring-red-500/20">
+            <div className="mt-4 flex items-center gap-2 rounded-xl bg-red-50 p-3 text-xs text-red-600 ring-1 ring-red-200">
               <AlertCircle className="h-4 w-4 shrink-0" />
               <span>{error}</span>
             </div>
@@ -148,14 +148,14 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 <a
                   href={downloadUrl}
                   download={`ahadu_${title.toLowerCase().replace(/[^a-z0-9]/gi, '_') || 'story'}_animation.webm`}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-amber-500 py-3 text-sm font-bold text-zinc-950 transition-colors hover:bg-amber-400 active:scale-98"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 py-3 text-sm font-bold text-white shadow-md shadow-purple-500/20 transition-transform hover:opacity-95 active:scale-98"
                 >
                   <Download className="h-4 w-4" />
                   <span>Download Again</span>
                 </a>
                 <button
                   onClick={onClose}
-                  className="rounded-xl border border-zinc-700 bg-zinc-800 px-4 py-3 text-sm font-semibold text-zinc-300 transition-colors hover:bg-zinc-700"
+                  className="rounded-xl border border-pink-200 bg-white px-4 py-3 text-sm font-bold text-purple-800 shadow-sm transition-colors hover:bg-pink-50"
                 >
                   Done
                 </button>
@@ -163,7 +163,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             ) : isExporting ? (
               <button
                 onClick={onClose}
-                className="w-full rounded-xl border border-zinc-800 bg-zinc-950 py-2.5 text-xs text-zinc-400 hover:bg-zinc-800"
+                className="w-full rounded-xl border border-pink-200 bg-white py-2.5 text-xs font-bold text-purple-700 hover:bg-pink-50"
               >
                 Cancel Export
               </button>
@@ -174,4 +174,3 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     </div>
   );
 };
-

@@ -82,32 +82,32 @@ export const SceneCard: React.FC<SceneCardProps> = ({
   };
 
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/60 p-4 shadow-lg transition-all hover:border-zinc-700 hover:shadow-amber-500/5">
+    <div className="group relative flex flex-col overflow-hidden rounded-3xl border border-pink-200/90 bg-white/90 p-4 shadow-md shadow-pink-500/5 transition-all hover:border-pink-300 hover:shadow-pink-500/10">
       {/* Top Header Bar */}
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-500/20 text-xs font-bold text-amber-300">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-pink-100 text-xs font-black text-pink-700">
             {scene.order}
           </span>
           <input
             type="text"
             value={scene.title}
             onChange={(e) => onUpdate({ ...scene, title: e.target.value })}
-            className="rounded-lg bg-transparent px-1.5 py-0.5 text-sm font-semibold text-zinc-200 hover:bg-zinc-800/80 focus:bg-zinc-800 focus:outline-none focus:ring-1 focus:ring-amber-500"
+            className="rounded-lg bg-transparent px-1.5 py-0.5 text-sm font-bold text-purple-950 hover:bg-pink-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-pink-400"
           />
         </div>
 
         <button
           onClick={() => onDelete(scene.id)}
-          className="text-zinc-500 transition-colors hover:text-red-400"
+          className="text-purple-300 transition-colors hover:text-red-500"
           title="Delete scene"
         >
           <Trash2 className="h-4 w-4" />
         </button>
       </div>
 
-      {/* Image Preview & Animation Effect Overlay */}
-      <div className="relative mb-3 aspect-video w-full overflow-hidden rounded-2xl bg-zinc-950">
+      {/* Image Preview */}
+      <div className="relative mb-3 aspect-video w-full overflow-hidden rounded-2xl bg-purple-100">
         <img
           src={scene.imageUrl}
           alt={scene.title}
@@ -130,7 +130,7 @@ export const SceneCard: React.FC<SceneCardProps> = ({
         <button
           onClick={handleRegenerateImage}
           disabled={isRegeneratingImg}
-          className="absolute bottom-2.5 right-2.5 flex items-center gap-1.5 rounded-xl bg-black/70 px-2.5 py-1 text-xs font-medium text-zinc-200 backdrop-blur-md transition-all hover:bg-amber-500 hover:text-zinc-950"
+          className="absolute bottom-2.5 right-2.5 flex items-center gap-1.5 rounded-xl bg-black/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-md transition-all hover:bg-gradient-to-r hover:from-pink-500 hover:to-purple-600"
           title="Regenerate scene illustration for free"
         >
           <RefreshCw className={`h-3 w-3 ${isRegeneratingImg ? 'animate-spin' : ''}`} />
@@ -141,11 +141,11 @@ export const SceneCard: React.FC<SceneCardProps> = ({
       {/* Narration editor */}
       <div className="mb-3 flex-1">
         <div className="mb-1.5 flex items-center justify-between">
-          <label className="text-xs font-medium text-zinc-400">Voice Narration (የተራኪው ድምፅ)</label>
+          <label className="text-xs font-bold text-purple-900">Voice Narration (የተራኪው ድምፅ)</label>
           <button
             onClick={handleToggleVoice}
-            className={`flex items-center gap-1 text-xs font-medium transition-colors ${
-              isPlayingAudio ? 'text-amber-400' : 'text-zinc-400 hover:text-zinc-200'
+            className={`flex items-center gap-1 text-xs font-bold transition-colors ${
+              isPlayingAudio ? 'text-pink-600' : 'text-purple-600 hover:text-pink-600'
             }`}
           >
             {isPlayingAudio ? (
@@ -165,22 +165,22 @@ export const SceneCard: React.FC<SceneCardProps> = ({
           rows={3}
           value={scene.narration}
           onChange={(e) => onUpdate({ ...scene, narration: e.target.value })}
-          className="w-full resize-none rounded-xl border border-zinc-800 bg-zinc-950/60 p-2.5 text-xs text-zinc-200 placeholder-zinc-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+          className="w-full resize-none rounded-xl border border-pink-200 bg-purple-50/40 p-2.5 text-xs font-medium text-purple-950 placeholder-purple-400 focus:bg-white focus:border-pink-400 focus:outline-none focus:ring-1 focus:ring-pink-400"
           placeholder="What does the narrator say in this scene?"
         />
       </div>
 
       {/* Controls: Camera & Duration */}
-      <div className="grid grid-cols-2 gap-2 border-t border-zinc-800/80 pt-3 text-xs">
+      <div className="grid grid-cols-2 gap-2 border-t border-pink-100 pt-3 text-xs">
         <div>
-          <label className="mb-1 flex items-center gap-1 text-[11px] text-zinc-400">
-            <Camera className="h-3 w-3 text-amber-500" />
+          <label className="mb-1 flex items-center gap-1 text-[11px] font-bold text-purple-800">
+            <Camera className="h-3 w-3 text-pink-500" />
             Motion
           </label>
           <select
             value={scene.motionType}
             onChange={(e) => onUpdate({ ...scene, motionType: e.target.value as CameraMotion })}
-            className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-200 focus:border-amber-500 focus:outline-none"
+            className="w-full rounded-lg border border-pink-200 bg-white px-2 py-1.5 text-xs font-semibold text-purple-900 focus:border-pink-400 focus:outline-none shadow-sm"
           >
             {CAMERA_MOTIONS.map((m) => (
               <option key={m.id} value={m.id}>
@@ -191,14 +191,14 @@ export const SceneCard: React.FC<SceneCardProps> = ({
         </div>
 
         <div>
-          <label className="mb-1 flex items-center gap-1 text-[11px] text-zinc-400">
-            <Clock className="h-3 w-3 text-amber-500" />
+          <label className="mb-1 flex items-center gap-1 text-[11px] font-bold text-purple-800">
+            <Clock className="h-3 w-3 text-purple-500" />
             Duration
           </label>
           <select
             value={scene.duration}
             onChange={(e) => onUpdate({ ...scene, duration: Number(e.target.value) })}
-            className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-200 focus:border-amber-500 focus:outline-none"
+            className="w-full rounded-lg border border-pink-200 bg-white px-2 py-1.5 text-xs font-semibold text-purple-900 focus:border-pink-400 focus:outline-none shadow-sm"
           >
             <option value={4}>4 seconds</option>
             <option value={5}>5 seconds</option>
@@ -210,4 +210,3 @@ export const SceneCard: React.FC<SceneCardProps> = ({
     </div>
   );
 };
-

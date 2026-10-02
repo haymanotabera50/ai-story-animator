@@ -175,7 +175,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 selection:bg-amber-500/30 selection:text-amber-200">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50/50 to-rose-50 text-purple-950 selection:bg-pink-300/40 selection:text-purple-950">
       <Header
         onOpenSettings={() => setIsSettingsOpen(true)}
         onPlayCinema={() => setIsCinemaOpen(true)}
@@ -187,7 +187,7 @@ export default function HomePage() {
         <section>
           <PromptSection onGenerate={handleGenerateStory} isLoading={isLoading} />
           {errorMsg && (
-            <div className="mt-4 rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-xs text-red-400">
+            <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-xs font-semibold text-red-700">
               {errorMsg}
             </div>
           )}
