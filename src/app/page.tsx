@@ -7,47 +7,50 @@ import { TimelineEditor } from '@/components/studio/TimelineEditor';
 import { CinemaPlayerModal } from '@/components/player/CinemaPlayerModal';
 import { ExportModal } from '@/components/modals/ExportModal';
 import { SettingsModal } from '@/components/modals/SettingsModal';
-import { StoryProject, StoryScene, ArtStyle, BgMusicMood } from '@/types/animation';
+import { StoryProject, StoryScene, ArtStyle, BgMusicMood, AspectRatio } from '@/types/animation';
 import { generateImageUrl } from '@/lib/image-generator';
 
 const INITIAL_PROJECT: StoryProject = {
-  id: 'starter-project',
-  title: 'The Clockwork Baker',
-  prompt: 'A friendly vintage brass robot opens a bakery in Paris and invents croissants that give people happy dreams.',
-  style: 'pixar-3d',
+  id: 'starter-kaldi',
+  title: 'The Legend of Kaldi & Coffee',
+  prompt: 'A young Ethiopian shepherd boy named Kaldi in ancient Kaffa discovers his lively goats dancing with joy under wild coffee trees with glowing red cherries.',
+  style: 'habesha-3d',
   aspectRatio: '16:9',
-  bgMusic: 'whimsical',
+  bgMusic: 'tizita',
   createdAt: new Date().toISOString(),
   scenes: [
     {
       id: 'sc-1',
       order: 1,
-      title: 'Dawn at the Boulangerie',
-      narration: 'Deep in the cobblestone alleys of Paris, a little brass robot named Barnaby wound his gears each morning before dawn.',
-      visualPrompt: 'Establishing wide shot of a charming vintage Paris bakery storefront at early dawn, warm glowing lantern light through windows, cobblestone street, Pixar Disney 3D style',
-      imageUrl: 'https://image.pollinations.ai/prompt/Establishing%20wide%20shot%20of%20a%20charming%20vintage%20Paris%20bakery%20storefront%20at%20early%20dawn%20with%20a%20cute%20brass%20robot%20baker%2C%20warm%20golden%20glowing%20lanterns%2C%20Pixar%20Disney%203D%20animation%20style%2C%20highly%20detailed%208k?width=1024&height=576&seed=14201&nologo=true&model=flux',
+      title: 'The Highlands of Kaffa (የካፋ ተራሮች)',
+      narration: 'Deep in the lush highland misty forests of ancient Kaffa, a young Ethiopian shepherd boy named Kaldi tended his herd beneath warm golden sunbeams.',
+      visualPrompt: 'Establishing wide shot of a young Ethiopian boy shepherd wearing traditional white cotton Habesha tunic with colorful Tibeb borders, tending cute goats on lush green highland ridges of Kaffa, majestic misty Ethiopian mountains, golden hour sunlight, Pixar Disney 3D style',
+      imageUrl: 'https://image.pollinations.ai/prompt/Establishing%20wide%20shot%20of%20a%20young%20Ethiopian%20boy%20shepherd%20wearing%20traditional%20white%20cotton%20Habesha%20tunic%20with%20colorful%20Tibeb%20borders%2C%20tending%20cute%20goats%20on%20lush%20green%20highland%20ridges%20of%20Kaffa%2C%20majestic%20misty%20Ethiopian%20mountains%2C%20golden%20hour%20sunlight%2C%20Pixar%20Disney%203D%20style?width=1024&height=576&seed=71042&nologo=true&model=flux',
       motionType: 'zoom-in',
       duration: 5,
+      soundtrackMood: 'tizita',
     },
     {
       id: 'sc-2',
       order: 2,
-      title: 'The Starlight Flour',
-      narration: 'With gentle ticking precision, Barnaby dusted sweet cinnamon and moonlight sugar into freshly kneaded golden dough.',
-      visualPrompt: 'Close up of a cute friendly brass robot wearing a tiny chef hat kneading glowing magical golden pastry dough, glowing flour sparks floating in the air, warm cozy kitchen, Pixar 3D style',
-      imageUrl: 'https://image.pollinations.ai/prompt/Close%20up%20of%20a%20cute%20brass%20robot%20wearing%20a%20white%20chef%20hat%20kneading%20glowing%20golden%20pastry%20dough%2C%20magical%20sparkles%20in%20warm%20sunlit%20kitchen%2C%20Pixar%20Disney%203D%20style?width=1024&height=576&seed=28512&nologo=true&model=flux',
+      title: 'The Secret Red Berries (ቀያይ ፍሬዎች)',
+      narration: 'Among the wild forest trees, he discovered mysterious bushes bearing bright crimson berries that sparkled like rubies in the morning light.',
+      visualPrompt: 'Close up of a cute Ethiopian boy with expressive almond eyes gently holding branches of wild coffee trees with glowing vibrant red cherries, magical morning sunbeams illuminating the berries, Pixar 3D animated film render',
+      imageUrl: 'https://image.pollinations.ai/prompt/Close%20up%20of%20a%20cute%20Ethiopian%20boy%20with%20expressive%20almond%20eyes%20gently%20holding%20branches%20of%20wild%20coffee%20trees%20with%20glowing%20vibrant%20red%20cherries%2C%20magical%20morning%20sunbeams%20illuminating%20the%20berries%2C%20Pixar%203D%20animated%20film%20render?width=1024&height=576&seed=84912&nologo=true&model=flux',
       motionType: 'pan-right',
       duration: 5,
+      soundtrackMood: 'tizita',
     },
     {
       id: 'sc-3',
       order: 3,
-      title: 'Flavors of Pure Joy',
-      narration: 'Whoever tasted his dream croissants suddenly felt the weight of the world melt away into laughter and quiet peace.',
-      visualPrompt: 'Happy smiling Parisian people outside a cute bakery enjoying delicious golden croissants, heartwarming expression of wonder, soft afternoon sunshine, Pixar 3D animation masterpiece',
-      imageUrl: 'https://image.pollinations.ai/prompt/Heartwarming%20scene%20of%20delighted%20people%20tasting%20golden%20fresh%20croissants%20outside%20a%20magical%20Parisian%20bakery%2C%20smiling%20robot%20waving%20from%20doorway%2C%20Pixar%203D%20style?width=1024&height=576&seed=49120&nologo=true&model=flux',
+      title: 'The Dance of Pure Joy (የፍስሐ ጭፈራ)',
+      narration: 'After chewing the sweet cherries, the goats leaped and danced across the meadows with boundless joy, discovering the magical gift of Ethiopian coffee.',
+      visualPrompt: 'Heartwarming playful scene of joyous goats dancing on their hind legs in a flowered Ethiopian mountain meadow with happy young Kaldi laughing, colorful wildflowers, soft sunset glow, Pixar 3D animation masterpiece',
+      imageUrl: 'https://image.pollinations.ai/prompt/Heartwarming%20playful%20scene%20of%20joyous%20goats%20dancing%20on%20their%20hind%20legs%20in%20a%20flowered%20Ethiopian%20mountain%20meadow%20with%20happy%20young%20Kaldi%20laughing%2C%20colorful%20wildflowers%2C%20soft%20sunset%20glow%2C%20Pixar%203D%20animation%20masterpiece?width=1024&height=576&seed=96321&nologo=true&model=flux',
       motionType: 'zoom-out',
       duration: 6,
+      soundtrackMood: 'tizita',
     },
   ],
 };
@@ -63,7 +66,8 @@ export default function HomePage() {
   const handleGenerateStory = async (
     prompt: string,
     style: ArtStyle,
-    sceneCount: number
+    sceneCount: number,
+    aspectRatio: AspectRatio
   ) => {
     setIsLoading(true);
     setErrorMsg(null);
@@ -95,8 +99,8 @@ export default function HomePage() {
         title: data.story.title,
         prompt,
         style,
-        aspectRatio: '16:9',
-        bgMusic: data.story.bgMusic || 'whimsical',
+        aspectRatio,
+        bgMusic: data.story.bgMusic || 'tizita',
         scenes: data.story.scenes,
         createdAt: new Date().toISOString(),
       });
@@ -130,13 +134,13 @@ export default function HomePage() {
       const newScene: StoryScene = {
         id: `sc-${Date.now()}`,
         order: nextOrder,
-        title: `Scene ${nextOrder}: New Horizon`,
-        narration: 'And as twilight settled, the story took an unexpected and wonderful turn...',
+        title: `Chapter ${nextOrder}: New Horizon (አዲስ ምዕራፍ)`,
+        narration: 'And beneath the vast starlit sky of the highlands, the legend continued to flourish...',
         visualPrompt: `Cinematic wide view, chapter ${nextOrder} of ${prev.prompt}`,
         imageUrl: generateImageUrl(
           `Cinematic wide view, chapter ${nextOrder} of ${prev.prompt}`,
           prev.style,
-          '16:9',
+          prev.aspectRatio,
           seed
         ),
         motionType: 'zoom-in',
@@ -160,7 +164,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 selection:bg-amber-500/30 selection:text-amber-200">
       <Header
         onOpenSettings={() => setIsSettingsOpen(true)}
         onPlayCinema={() => setIsCinemaOpen(true)}
@@ -172,7 +176,7 @@ export default function HomePage() {
         <section>
           <PromptSection onGenerate={handleGenerateStory} isLoading={isLoading} />
           {errorMsg && (
-            <div className="mt-4 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-xs text-red-400">
+            <div className="mt-4 rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-xs text-red-400">
               {errorMsg}
             </div>
           )}
@@ -203,6 +207,7 @@ export default function HomePage() {
         scenes={project.scenes}
         bgMusic={project.bgMusic}
         title={project.title}
+        aspectRatio={project.aspectRatio}
       />
 
       {/* Video export dialog */}
@@ -221,4 +226,3 @@ export default function HomePage() {
     </div>
   );
 }
-

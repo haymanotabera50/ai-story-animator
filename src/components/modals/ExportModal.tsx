@@ -24,7 +24,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     currentScene: 0,
     totalScenes: scenes.length,
     progressPercent: 0,
-    statusText: 'Preparing video pipeline...',
+    statusText: 'Preparing Ahadu video engine...',
   });
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -54,17 +54,16 @@ export const ExportModal: React.FC<ExportModalProps> = ({
       setDownloadUrl(url);
       setIsExporting(false);
 
-      // Trigger celebration confetti
       try {
         confetti({
-          particleCount: 80,
-          spread: 70,
+          particleCount: 90,
+          spread: 80,
           origin: { y: 0.6 },
+          colors: ['#f59e0b', '#10b981', '#ef4444', '#ffffff'],
         });
       } catch {}
 
-      // Auto trigger download
-      const safeFilename = `${title.toLowerCase().replace(/[^a-z0-9]/gi, '_') || 'story'}_animation.webm`;
+      const safeFilename = `ahadu_${title.toLowerCase().replace(/[^a-z0-9]/gi, '_') || 'story'}_animation.webm`;
       const a = document.createElement('a');
       a.href = url;
       a.download = safeFilename;
@@ -91,7 +90,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
         </button>
 
         <div className="flex flex-col items-center text-center">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-400 ring-1 ring-purple-500/20">
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20">
             {isExporting ? (
               <Loader2 className="h-7 w-7 animate-spin" />
             ) : downloadUrl ? (
@@ -103,17 +102,17 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
           <h3 className="text-lg font-bold text-white">
             {isExporting
-              ? 'Rendering Animation Video'
+              ? 'Rendering Ahadu Video (Free)'
               : downloadUrl
-              ? 'Video Export Complete!'
+              ? 'Animation Downloaded! (እንኳን ደስ አለዎት)'
               : 'Export Video'}
           </h3>
           <p className="mt-1 text-xs text-zinc-400">
             {isExporting
               ? progress.statusText
               : downloadUrl
-              ? 'Your high-definition animated video has been downloaded.'
-              : 'Preparing high-definition video renderer...'}
+              ? 'Your high-definition animated video has been downloaded directly to your device.'
+              : 'Preparing client-side video compositor...'}
           </p>
 
           {/* Progress Bar */}
@@ -121,7 +120,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
             <div className="mt-6 w-full space-y-2">
               <div className="h-2.5 w-full overflow-hidden rounded-full bg-zinc-800">
                 <div
-                  className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-300"
+                  className="h-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-400 transition-all duration-300"
                   style={{ width: `${progress.progressPercent}%` }}
                 />
               </div>
@@ -148,8 +147,8 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               <>
                 <a
                   href={downloadUrl}
-                  download={`${title.toLowerCase().replace(/[^a-z0-9]/gi, '_') || 'story'}_animation.webm`}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-purple-600 py-3 text-sm font-semibold text-white transition-colors hover:bg-purple-500 active:scale-98"
+                  download={`ahadu_${title.toLowerCase().replace(/[^a-z0-9]/gi, '_') || 'story'}_animation.webm`}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-amber-500 py-3 text-sm font-bold text-zinc-950 transition-colors hover:bg-amber-400 active:scale-98"
                 >
                   <Download className="h-4 w-4" />
                   <span>Download Again</span>
@@ -175,4 +174,3 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     </div>
   );
 };
-

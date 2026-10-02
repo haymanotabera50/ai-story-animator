@@ -13,8 +13,9 @@ import {
   Maximize2,
   Minimize2,
 } from 'lucide-react';
-import { StoryScene, BgMusicMood, CameraMotion } from '@/types/animation';
+import { StoryScene, BgMusicMood, CameraMotion, AspectRatio } from '@/types/animation';
 import { speakNarration, ambientSoundtrack } from '@/lib/audio-engine';
+import { EthiopianCross } from '@/components/common/EthiopianCross';
 
 interface CinemaPlayerModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ interface CinemaPlayerModalProps {
   scenes: StoryScene[];
   bgMusic: BgMusicMood;
   title: string;
+  aspectRatio?: AspectRatio;
 }
 
 export const CinemaPlayerModal: React.FC<CinemaPlayerModalProps> = ({
@@ -30,6 +32,7 @@ export const CinemaPlayerModal: React.FC<CinemaPlayerModalProps> = ({
   scenes,
   bgMusic,
   title,
+  aspectRatio = '16:9',
 }) => {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -44,7 +47,6 @@ export const CinemaPlayerModal: React.FC<CinemaPlayerModalProps> = ({
 
   const currentScene = scenes[currentIdx];
 
-  // Start playback when opened
   useEffect(() => {
     if (isOpen && scenes.length > 0) {
       setCurrentIdx(0);
@@ -60,11 +62,9 @@ export const CinemaPlayerModal: React.FC<CinemaPlayerModalProps> = ({
     };
   }, [isOpen]);
 
-  // Handle scene playback changes
   useEffect(() => {
     if (!isOpen || !isPlaying || !currentScene) return;
 
-    // Reset progress
     setSceneProgress(0);
     const duration = currentScene.duration || 5;
     const intervalMs = 50;
@@ -77,27 +77,19 @@ export const CinemaPlayerModal: React.FC<CinemaPlayerModalProps> = ({
       setSceneProgress(Math.min(100, (step / totalSteps) * 100));
     }, intervalMs);
 
-    // Speak narration
     if (audioStopperRef.current) {
       audioStopperRef.current.stop();
     }
 
     if (!isMuted) {
-      audioStopperRef.current = speakNarration(
-        currentScene.narration,
-        () => {
-          // Voice ended
-        }
-      );
+      audioStopperRef.current = speakNarration(currentScene.narration);
     }
 
-    // Advance scene when time completes
     if (sceneTimerRef.current) clearTimeout(sceneTimerRef.current);
     sceneTimerRef.current = setTimeout(() => {
       if (currentIdx < scenes.length - 1) {
         setCurrentIdx((prev) => prev + 1);
       } else {
-        // Story finished
         setIsPlaying(false);
       }
     }, duration * 1000);
@@ -180,7 +172,6 @@ export const CinemaPlayerModal: React.FC<CinemaPlayerModalProps> = ({
 
   if (!isOpen || !currentScene) return null;
 
-  // Determine dynamic motion CSS
   const getMotionStyle = (motion: CameraMotion) => {
     const durationSec = currentScene.duration || 5;
     const styleObj: React.CSSProperties = {
@@ -208,23 +199,35 @@ export const CinemaPlayerModal: React.FC<CinemaPlayerModalProps> = ({
     }
   };
 
+  const getContainerAspect = () => {
+    switch (aspectRatio) {
+      case '9:16':
+        return 'max-w-md aspect-[9/16]';
+      case '1:1':
+        return 'max-w-xl aspect-square';
+      case '16:9':
+      default:
+        return 'lg:max-w-6xl aspect-video';
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-2xl">
       <div
         ref={containerRef}
-        className="relative flex h-full w-full flex-col overflow-hidden bg-black lg:max-h-[90vh] lg:max-w-6xl lg:rounded-3xl lg:border lg:border-zinc-800"
+        className={`relative flex h-full w-full flex-col overflow-hidden bg-black lg:max-h-[92vh] ${getContainerAspect()} lg:rounded-3xl lg:border lg:border-amber-500/20 shadow-2xl shadow-amber-500/5`}
       >
         {/* Top Header / Progress Bar */}
-        <div className="absolute top-0 z-30 flex w-full flex-col bg-gradient-to-b from-black/80 to-transparent p-4 sm:p-6">
+        <div className="absolute top-0 z-30 flex w-full flex-col bg-gradient-to-b from-black/85 to-transparent p-4 sm:p-6">
           {/* Segmented Scene Progress Bar */}
           <div className="mb-4 flex items-center gap-1.5">
             {scenes.map((s, idx) => (
               <div
                 key={s.id}
-                className="relative h-1 flex-1 overflow-hidden rounded-full bg-white/20"
+                className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-white/20"
               >
                 <div
-                  className="h-full bg-white transition-all"
+                  className="h-full bg-amber-400 transition-all"
                   style={{
                     width:
                       idx < currentIdx
@@ -239,16 +242,21 @@ export const CinemaPlayerModal: React.FC<CinemaPlayerModalProps> = ({
           </div>
 
           <div className="flex items-center justify-between">
-            <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-purple-400">
-                Scene {currentIdx + 1} of {scenes.length} • {currentScene.title}
-              </span>
-              <h2 className="text-lg font-bold text-white drop-shadow">{title}</h2>
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400">
+                <EthiopianCross size={18} />
+              </div>
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400">
+                  Ahadu Cinema • Scene {currentIdx + 1}/{scenes.length} • {currentScene.title}
+                </span>
+                <h2 className="text-base font-extrabold text-white drop-shadow sm:text-lg">{title}</h2>
+              </div>
             </div>
 
             <button
               onClick={onClose}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-md transition-colors hover:bg-white/20"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition-colors hover:bg-amber-500 hover:text-zinc-950"
             >
               <X className="h-5 w-5" />
             </button>
@@ -267,13 +275,13 @@ export const CinemaPlayerModal: React.FC<CinemaPlayerModalProps> = ({
 
           {/* Vignette Overlay */}
           <div className="pointer-events-none absolute inset-0 bg-radial-gradient" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/40" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/50" />
 
           {/* Subtitles Box */}
           {currentScene.narration && (
             <div className="absolute bottom-24 left-1/2 z-20 w-11/12 -translate-x-1/2 sm:w-4/5 lg:w-3/5">
-              <div className="rounded-2xl border border-white/10 bg-black/75 px-6 py-4 text-center backdrop-blur-md shadow-2xl">
-                <p className="text-base font-medium leading-relaxed text-zinc-100 sm:text-lg">
+              <div className="rounded-2xl border border-amber-500/20 bg-black/80 px-6 py-4 text-center backdrop-blur-xl shadow-2xl">
+                <p className="text-base font-semibold leading-relaxed text-zinc-100 sm:text-lg">
                   {currentScene.narration}
                 </p>
               </div>
@@ -282,7 +290,7 @@ export const CinemaPlayerModal: React.FC<CinemaPlayerModalProps> = ({
         </div>
 
         {/* Bottom Playback Control Bar */}
-        <div className="absolute bottom-0 z-30 flex w-full items-center justify-between bg-gradient-to-t from-black/90 to-transparent p-4 sm:p-6">
+        <div className="absolute bottom-0 z-30 flex w-full items-center justify-between bg-gradient-to-t from-black/95 to-transparent p-4 sm:p-6">
           <div className="flex items-center gap-2">
             <button
               onClick={handleToggleMute}
@@ -291,6 +299,9 @@ export const CinemaPlayerModal: React.FC<CinemaPlayerModalProps> = ({
             >
               {isMuted ? <VolumeX className="h-5 w-5 text-red-400" /> : <Volume2 className="h-5 w-5" />}
             </button>
+            <span className="hidden text-xs font-semibold text-amber-400/90 sm:inline font-serif capitalize">
+              {bgMusic} mode
+            </span>
           </div>
 
           <div className="flex items-center gap-3">
@@ -305,7 +316,7 @@ export const CinemaPlayerModal: React.FC<CinemaPlayerModalProps> = ({
 
             <button
               onClick={handleTogglePlay}
-              className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-zinc-950 shadow-lg shadow-white/20 transition-all hover:scale-105 active:scale-95"
+              className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-400 text-zinc-950 shadow-lg shadow-amber-400/30 transition-all hover:scale-105 active:scale-95"
               title={isPlaying ? 'Pause' : 'Play'}
             >
               {isPlaying ? <Pause className="h-6 w-6 fill-zinc-950" /> : <Play className="h-6 w-6 fill-zinc-950" />}
@@ -343,4 +354,3 @@ export const CinemaPlayerModal: React.FC<CinemaPlayerModalProps> = ({
     </div>
   );
 };
-

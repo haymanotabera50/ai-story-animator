@@ -1,10 +1,11 @@
 export type ArtStyle = 
+  | 'habesha-3d'
+  | 'ethiopian-manuscript'
+  | 'simien-folktale'
   | 'pixar-3d'
   | 'ghibli-anime'
   | 'watercolor'
-  | 'comic-book'
-  | 'claymation'
-  | 'fantasy-art';
+  | 'comic-book';
 
 export type CameraMotion = 
   | 'zoom-in'
@@ -16,7 +17,14 @@ export type CameraMotion =
 
 export type AspectRatio = '16:9' | '9:16' | '1:1';
 
-export type BgMusicMood = 'whimsical' | 'adventure' | 'bedtime' | 'cyberpunk' | 'none';
+export type BgMusicMood = 
+  | 'tizita'
+  | 'bati'
+  | 'ambassel'
+  | 'whimsical'
+  | 'adventure'
+  | 'bedtime'
+  | 'none';
 
 export interface StoryScene {
   id: string;
@@ -28,10 +36,6 @@ export interface StoryScene {
   motionType: CameraMotion;
   duration: number; // in seconds
   soundtrackMood?: BgMusicMood;
-  subtitleTiming?: {
-    words: string[];
-    durations: number[];
-  };
 }
 
 export interface StoryProject {
@@ -48,8 +52,8 @@ export interface StoryProject {
 export interface ArtStyleOption {
   id: ArtStyle;
   name: string;
+  amharicName: string;
   description: string;
   previewImage: string;
   promptSuffix: string;
 }
-

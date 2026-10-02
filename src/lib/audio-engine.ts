@@ -12,7 +12,7 @@ class AmbientSoundtrack {
       if (AudioCtx) {
         this.ctx = new AudioCtx();
         this.gainNode = this.ctx.createGain();
-        this.gainNode.gain.value = 0.15; // Ambient background volume
+        this.gainNode.gain.value = 0.16; // Ambient background volume
         this.gainNode.connect(this.ctx.destination);
       }
     }
@@ -34,15 +34,21 @@ class AmbientSoundtrack {
     if (this.isPlaying) this.stop();
     this.isPlaying = true;
 
-    // Define harmonic progressions based on mood
+    // Authentic Ethiopian Pentatonic Qenet (ቅኝት) and global harmonies
     const moodScales: Record<string, number[]> = {
-      whimsical: [261.63, 329.63, 392.0, 523.25, 659.25], // C major pentatonic
-      adventure: [220.0, 261.63, 293.66, 329.63, 440.0], // A minor / cinematic
-      bedtime: [196.0, 246.94, 293.66, 392.0, 440.0], // G gentle lullaby
-      cyberpunk: [146.83, 174.61, 220.0, 246.94, 293.66], // D synthwave
+      // Tizita (ትዝታ): Nostalgic Ethiopian pentatonic mode
+      tizita: [261.63, 293.66, 329.63, 392.0, 440.0, 523.25],
+      // Bati (ባቲ): Majestic, contemplative Ethiopian highland & desert mode
+      bati: [261.63, 329.63, 349.23, 392.0, 493.88, 523.25],
+      // Ambassel (አምባሰል): Noble, royal Abyssinian storytelling mode
+      ambassel: [220.0, 246.94, 261.63, 329.63, 349.23, 440.0],
+      // Global moods
+      whimsical: [261.63, 329.63, 392.0, 523.25, 659.25],
+      adventure: [220.0, 261.63, 293.66, 329.63, 440.0],
+      bedtime: [196.0, 246.94, 293.66, 392.0, 440.0],
     };
 
-    const notes = moodScales[mood] || moodScales.whimsical;
+    const notes = moodScales[mood] || moodScales.tizita;
     let step = 0;
 
     const playNote = () => {
@@ -54,20 +60,22 @@ class AmbientSoundtrack {
       const freq = notes[step % notes.length];
       step = (step + 1) % notes.length;
 
-      osc.type = mood === 'cyberpunk' ? 'sawtooth' : 'sine';
+      // Authentic krar/acoustic harp-like pluck curve for Ethiopian modes
+      const isEthiopian = ['tizita', 'bati', 'ambassel'].includes(mood);
+      osc.type = isEthiopian ? 'triangle' : 'sine';
       osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
 
       noteGain.gain.setValueAtTime(0.01, this.ctx.currentTime);
-      noteGain.gain.exponentialRampToValueAtTime(0.12, this.ctx.currentTime + 0.4);
-      noteGain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 2.4);
+      noteGain.gain.exponentialRampToValueAtTime(0.14, this.ctx.currentTime + (isEthiopian ? 0.05 : 0.3));
+      noteGain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 2.6);
 
       osc.connect(noteGain);
       noteGain.connect(this.gainNode);
 
       osc.start();
-      osc.stop(this.ctx.currentTime + 2.5);
+      osc.stop(this.ctx.currentTime + 2.7);
 
-      this.timer = setTimeout(playNote, 1400);
+      this.timer = setTimeout(playNote, isEthiopian ? 1100 : 1400);
     };
 
     playNote();
@@ -91,7 +99,7 @@ class AmbientSoundtrack {
 export const ambientSoundtrack = new AmbientSoundtrack();
 
 /**
- * Speech synthesis with word tracking for subtitles
+ * Speech synthesis with storytelling cadence
  */
 export function speakNarration(
   text: string,
@@ -106,10 +114,9 @@ export function speakNarration(
   window.speechSynthesis.cancel();
 
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.rate = 0.95; // slightly slower for cinematic storytelling
-  utterance.pitch = 1.05; // warm, engaging tone
+  utterance.rate = 0.92; // Slightly measured for noble oral storytelling
+  utterance.pitch = 1.04;
 
-  // Attempt to select a natural voice
   const voices = window.speechSynthesis.getVoices();
   const naturalVoice = voices.find(
     (v) =>
@@ -142,4 +149,3 @@ export function speakNarration(
     },
   };
 }
-

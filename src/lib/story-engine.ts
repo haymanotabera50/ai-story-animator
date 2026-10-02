@@ -26,7 +26,7 @@ export async function generateStoryScenes({
     }
   }
 
-  // Fallback to built-in Creative Director Story Engine
+  // Built-in Creative Director
   return generateWithCreativeDirector(prompt, style, sceneCount);
 }
 
@@ -36,17 +36,17 @@ async function generateWithGemini(
   sceneCount: number,
   apiKey: string
 ): Promise<{ title: string; scenes: StoryScene[]; bgMusic: BgMusicMood }> {
-  const systemInstruction = `You are an elite animated short film director and story artist.
+  const systemInstruction = `You are the lead director of Ahadu (አሐዱ) Animation Studio, an elite animation studio blending rich Ethiopian heritage, African folklore, and global animation magic.
 Break down the user's story idea into exactly ${sceneCount} sequential animated scenes.
 Format your output strictly as a JSON object matching this schema:
 {
-  "title": "Short catchy title",
-  "bgMusic": "whimsical" | "adventure" | "bedtime" | "cyberpunk",
+  "title": "Poetic and memorable story title",
+  "bgMusic": "tizita" | "bati" | "ambassel" | "whimsical" | "adventure" | "bedtime",
   "scenes": [
     {
       "title": "Scene title",
       "narration": "Poetic, expressive voiceover narration (2-3 sentences)",
-      "visualPrompt": "Detailed visual description of characters, environment, lighting, and action for image generation. Keep character details consistent across scenes.",
+      "visualPrompt": "Detailed visual description of characters, environment, lighting, and action for image generation. Keep character and attire details consistent across scenes.",
       "motionType": "zoom-in" | "zoom-out" | "pan-left" | "pan-right" | "pan-up" | "drift",
       "duration": 5
     }
@@ -86,24 +86,24 @@ Return only valid JSON, without any markdown formatting or commentary.`;
   const scenes: StoryScene[] = (parsed.scenes || []).map((sc: any, idx: number) => ({
     id: `scene-${Date.now()}-${idx}`,
     order: idx + 1,
-    title: sc.title || `Scene ${idx + 1}`,
+    title: sc.title || `Chapter ${idx + 1}`,
     narration: sc.narration || '',
     visualPrompt: sc.visualPrompt || userPrompt,
-    imageUrl: generateImageUrl(sc.visualPrompt || userPrompt, style, '16:9', 1000 + idx * 77),
+    imageUrl: generateImageUrl(sc.visualPrompt || userPrompt, style, '16:9', 1000 + idx * 83),
     motionType: (sc.motionType as CameraMotion) || CAMERA_SEQUENCE[idx % CAMERA_SEQUENCE.length],
     duration: Math.max(4, Math.min(8, sc.duration || 5)),
   }));
 
   return {
-    title: parsed.title || 'Untitled Animated Tale',
-    bgMusic: (parsed.bgMusic as BgMusicMood) || 'whimsical',
+    title: parsed.title || 'Ahadu Animated Tale',
+    bgMusic: (parsed.bgMusic as BgMusicMood) || 'tizita',
     scenes,
   };
 }
 
 /**
- * Autonomous Creative Director: Intelligently generates vivid storyboards
- * with cohesive character consistency, emotional narrative arcs, and visual prompts.
+ * Autonomous Creative Director for Ahadu Studio:
+ * Handles Ethiopian folklore, contemporary tales, and global wonder seamlessly.
  */
 function generateWithCreativeDirector(
   userPrompt: string,
@@ -113,57 +113,68 @@ function generateWithCreativeDirector(
   const cleanedPrompt = userPrompt.trim();
   const title = deriveTitleFromPrompt(cleanedPrompt);
 
-  // Determine mood based on keywords
-  let bgMusic: BgMusicMood = 'whimsical';
+  // Default to authentic Ethiopian pentatonic modes when Ethiopian styles are selected
+  let bgMusic: BgMusicMood = 'tizita';
   const lower = cleanedPrompt.toLowerCase();
-  if (lower.includes('cyber') || lower.includes('space') || lower.includes('neon') || lower.includes('robot')) {
-    bgMusic = 'cyberpunk';
-  } else if (lower.includes('adventure') || lower.includes('quest') || lower.includes('dragon') || lower.includes('ocean')) {
-    bgMusic = 'adventure';
-  } else if (lower.includes('sleep') || lower.includes('night') || lower.includes('bed') || lower.includes('dream')) {
-    bgMusic = 'bedtime';
+
+  if (style === 'habesha-3d' || style === 'ethiopian-manuscript' || style === 'simien-folktale') {
+    if (lower.includes('mountain') || lower.includes('hero') || lower.includes('warrior') || lower.includes('ibex')) {
+      bgMusic = 'bati';
+    } else if (lower.includes('ancient') || lower.includes('church') || lower.includes('monastery') || lower.includes('castle')) {
+      bgMusic = 'ambassel';
+    } else {
+      bgMusic = 'tizita';
+    }
+  } else {
+    if (lower.includes('adventure') || lower.includes('journey')) {
+      bgMusic = 'adventure';
+    } else if (lower.includes('sleep') || lower.includes('night') || lower.includes('dream')) {
+      bgMusic = 'bedtime';
+    } else {
+      bgMusic = 'whimsical';
+    }
   }
 
   const baseSeed = Math.floor(Math.random() * 800000);
 
   const sceneTemplates = [
     {
-      stage: 'The Beginning',
+      stage: 'The Awakening (መነሻ)',
       narrationPattern: (p: string) =>
-        `Once upon a quiet horizon, ${p.toLowerCase().replace(/^(a|an|the)\s+/i, '')}. Everything seemed ordinary until an unexpected flicker of wonder changed the day.`,
-      visualPrefix: 'Establishing wide shot, introducing the setting and character, tranquil atmosphere, cinematic lighting',
+        `In a timeless realm of beauty and wonder, ${p.toLowerCase().replace(/^(a|an|the)\s+/i, '')}. Beneath skies washed with golden sunlight, a new destiny was quietly born.`,
+      visualPrefix: 'Establishing majestic landscape shot, introducing character in traditional attire, warm golden hour sunbeams, atmospheric mist',
       motion: 'zoom-in' as CameraMotion,
       duration: 5,
     },
     {
-      stage: 'The Discovery',
+      stage: 'The Calling (ምሥጢሩ ሲገለጥ)',
       narrationPattern: () =>
-        `Drawn by curiosity, a hidden secret revealed itself beneath glowing lights. The world began to whisper promises of an unforgettable journey.`,
-      visualPrefix: 'Medium close-up shot, character discovering something magical, glowing light illuminating their eyes with wonder',
+        `Guided by ancient whispers and an insatiable spirit of curiosity, a glowing path revealed itself. Every step forward stirred the heart with courage.`,
+      visualPrefix: 'Medium shot, character discovering a glowing magical element, expression of profound awe and wonder, radiant ambient lighting',
       motion: 'pan-right' as CameraMotion,
       duration: 5,
     },
     {
-      stage: 'The Great Leap',
+      stage: 'The Great Leap (ጀብዱ)',
       narrationPattern: () =>
-        `With courage stirring deep within, every fear dissolved into sheer determination. It was time to take flight toward the unknown.`,
-      visualPrefix: 'Dynamic action angle, soaring movement, vibrant swirling elements, dramatic sense of motion and excitement',
+        `With fear cast aside like dry leaves in the highland breeze, they took flight across the horizon. Wonders never imagined unfolded before their eyes.`,
+      visualPrefix: 'Dynamic panoramic angle, breathtaking soaring movement across majestic scenery, vibrant colors, swirling magical particles',
       motion: 'pan-up' as CameraMotion,
       duration: 6,
     },
     {
-      stage: 'Heartwarming Reunion',
+      stage: 'Harmonious Triumph (ድልና ስምምነት)',
       narrationPattern: () =>
-        `And as the sun painted the sky in shades of gold, they knew that true magic was never the destination, but the courage to dream along the way.`,
-      visualPrefix: 'Golden hour cinematic master shot, heartwarming embrace, sunset glow, floating particles of light, peaceful ending',
+        `And as twilight painted the peaks in violet and gold, laughter echoed through the valley. They realized the truest magic was the love and courage shared along the journey.`,
+      visualPrefix: 'Heartwarming cinematic master shot, warm embraces and joyous expressions, glowing sunset backdrop, peaceful harmony',
       motion: 'zoom-out' as CameraMotion,
       duration: 6,
     },
     {
-      stage: 'The Legacy',
+      stage: 'The Eternal Legend (ዘላለማዊ ተረት)',
       narrationPattern: () =>
-        `From that day forth, stars shone just a little brighter, carrying whispers of their brave adventure across the endless skies.`,
-      visualPrefix: 'Starlit sky overview, character looking out into the serene horizon, twinkling constellations, peaceful twilight',
+        `From that day forward, the story was woven into the songs of the elders and whispered to the stars, shining forever bright in the heart of Ahadu.`,
+      visualPrefix: 'Twilight star-filled sky overview, peaceful silhouettes overlooking serene highlands, twinkling constellations of wonder',
       motion: 'drift' as CameraMotion,
       duration: 5,
     },
@@ -174,7 +185,7 @@ function generateWithCreativeDirector(
 
   const scenes: StoryScene[] = selectedTemplates.map((tpl, idx) => {
     const scenePrompt = `${tpl.visualPrefix}, featuring ${cleanedPrompt}`;
-    const imageUrl = generateImageUrl(scenePrompt, style, '16:9', baseSeed + idx * 133);
+    const imageUrl = generateImageUrl(scenePrompt, style, '16:9', baseSeed + idx * 149);
 
     return {
       id: `scene-${Date.now()}-${idx}`,
@@ -198,9 +209,8 @@ function generateWithCreativeDirector(
 
 function deriveTitleFromPrompt(prompt: string): string {
   const words = prompt.replace(/[^\w\s]/gi, '').split(/\s+/).slice(0, 5);
-  if (words.length === 0) return 'The Magic Adventure';
+  if (words.length === 0) return 'The Legend of Ahadu';
   return words
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
     .join(' ');
 }
-
