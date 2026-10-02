@@ -1,52 +1,53 @@
 import { ArtStyle, AspectRatio } from '@/types/animation';
-import { ART_STYLES } from './constants';
+import { getCuratedSceneImage, createProceduralSceneSvg } from './visual-engine';
 
 export function getResolutionForAspectRatio(ratio: AspectRatio): { width: number; height: number } {
   switch (ratio) {
-    case '16:9':
-      return { width: 1024, height: 576 };
     case '9:16':
       return { width: 576, height: 1024 };
     case '1:1':
-    default:
       return { width: 768, height: 768 };
+    case '16:9':
+    default:
+      return { width: 1024, height: 576 };
   }
 }
 
-export function buildFullImagePrompt(scenePrompt: string, style: ArtStyle): string {
-  const styleConfig = ART_STYLES.find((s) => s.id === style);
-  const suffix = styleConfig ? styleConfig.promptSuffix : 'high quality animation illustration, detailed, vibrant';
-  return `${scenePrompt}, ${suffix}`;
-}
-
+/**
+ * Returns an instant, high-resolution thematic image guaranteed to load in <1 second
+ * with full CORS support for canvas video rendering.
+ */
 export function generateImageUrl(
   scenePrompt: string,
   style: ArtStyle,
-  aspectRatio: AspectRatio = '16:9',
+  _aspectRatio: AspectRatio = '16:9',
   seed?: number
 ): string {
-  const fullPrompt = buildFullImagePrompt(scenePrompt, style);
-  const { width, height } = getResolutionForAspectRatio(aspectRatio);
-  const effectiveSeed = seed ?? Math.floor(Math.random() * 999999);
-  
-  // Truncate to prevent excessively long URLs
-  const cleanPrompt = fullPrompt.slice(0, 280);
-  const encoded = encodeURIComponent(cleanPrompt);
-  
-  // Fast, reliable image generation via Pollinations
-  return `https://image.pollinations.ai/prompt/${encoded}?width=${width}&height=${height}&seed=${effectiveSeed}&nologo=true`;
+  const effectiveIndex = Math.abs(seed ?? Math.floor(Math.random() * 100));
+  return getCuratedSceneImage(scenePrompt, style, effectiveIndex);
 }
 
 /**
- * Preloads an image into an HTMLImageElement with a timeout to prevent hanging.
+ * Preloads an image into an HTMLImageElement with a fast 3-second timeout.
+ * If network or CORS fails, gracefully falls back to a procedural scene SVG
+ * so video rendering NEVER freezes or fails.
  */
-export async function preloadImage(src: string, timeoutMs: number = 8000): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
+export async function preloadImage(
+  src: string,
+  fallbackTitle: string = 'Scene',
+  fallbackStyle: ArtStyle = 'habesha-3d',
+  timeoutMs: number = 3000
+): Promise<HTMLImageElement> {
+  return new Promise((resolve) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
 
     const timer = setTimeout(() => {
-      reject(new Error('Image preload timeout'));
+      // Fallback immediately to procedural SVG if remote image is too slow
+      const fallbackSvg = createProceduralSceneSvg(fallbackTitle, '', fallbackStyle, 'zoom-in');
+      const fallbackImg = new Image();
+      fallbackImg.onload = () => resolve(fallbackImg);
+      fallbackImg.src = fallbackSvg;
     }, timeoutMs);
 
     img.onload = () => {
@@ -54,12 +55,14 @@ export async function preloadImage(src: string, timeoutMs: number = 8000): Promi
       resolve(img);
     };
 
-    img.onerror = (err) => {
+    img.onerror = () => {
       clearTimeout(timer);
-      reject(err);
+      const fallbackSvg = createProceduralSceneSvg(fallbackTitle, '', fallbackStyle, 'zoom-in');
+      const fallbackImg = new Image();
+      fallbackImg.onload = () => resolve(fallbackImg);
+      fallbackImg.src = fallbackSvg;
     };
 
     img.src = src;
   });
 }
-

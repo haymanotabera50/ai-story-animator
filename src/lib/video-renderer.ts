@@ -21,29 +21,29 @@ export async function renderStoryToVideo(
   canvas.height = height;
   const ctx = canvas.getContext('2d')!;
 
-  // Preload all images
   onProgress?.({
     currentScene: 0,
     totalScenes: scenes.length,
     progressPercent: 5,
-    statusText: 'Preloading illustrations...',
+    statusText: 'Loading illustrations...',
   });
 
+  // Preload all images guaranteed with fast fallback
   const loadedImages: HTMLImageElement[] = [];
   for (let i = 0; i < scenes.length; i++) {
     try {
-      const img = await preloadImage(scenes[i].imageUrl);
+      const img = await preloadImage(scenes[i].imageUrl, scenes[i].title);
       loadedImages.push(img);
     } catch {
-      // Fallback placeholder canvas
+      // Emergency canvas fallback
       const fallback = document.createElement('canvas');
       fallback.width = width;
       fallback.height = height;
       const fCtx = fallback.getContext('2d')!;
-      fCtx.fillStyle = '#1e1b4b';
+      fCtx.fillStyle = '#4c1d95';
       fCtx.fillRect(0, 0, width, height);
       fCtx.fillStyle = '#ffffff';
-      fCtx.font = '32px sans-serif';
+      fCtx.font = 'bold 36px sans-serif';
       fCtx.fillText(scenes[i].title, 100, height / 2);
       const img = new Image();
       img.src = fallback.toDataURL();
@@ -61,7 +61,7 @@ export async function renderStoryToVideo(
 
   const mediaRecorder = new MediaRecorder(stream, {
     mimeType,
-    videoBitsPerSecond: 4000000, // 4 Mbps high quality
+    videoBitsPerSecond: 3500000,
   });
 
   const chunks: Blob[] = [];
@@ -79,51 +79,48 @@ export async function renderStoryToVideo(
   mediaRecorder.start();
 
   const totalScenes = scenes.length;
-  let overallProgress = 10;
+  // Use compact render duration for fast video export (3.5s per scene during recording)
+  const sceneRenderSec = 3.5;
+  const totalFramesPerScene = Math.floor(sceneRenderSec * fps);
 
   for (let sIdx = 0; sIdx < totalScenes; sIdx++) {
     const scene = scenes[sIdx];
     const img = loadedImages[sIdx];
-    const durationSec = scene.duration || 5;
-    const totalFrames = durationSec * fps;
     const motion = scene.motionType;
 
-    for (let frame = 0; frame < totalFrames; frame++) {
-      const t = frame / totalFrames; // 0 to 1
+    for (let frame = 0; frame < totalFramesPerScene; frame++) {
+      const t = frame / totalFramesPerScene;
 
       // Clear canvas
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, width, height);
 
-      // Compute motion transform
+      // Camera motion
       ctx.save();
       applyCameraTransform(ctx, width, height, motion, t);
-
-      // Draw image to cover
       drawImageCover(ctx, img, width, height);
       ctx.restore();
 
-      // Cinematic Vignette
+      // Vignette
       drawVignette(ctx, width, height);
 
-      // Draw subtitles
+      // Subtitles
       drawSubtitles(ctx, width, height, scene.narration, t);
 
-      // Draw progress indicator bar at the bottom
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-      const sceneBarWidth = (width / totalScenes) * (sIdx + t);
-      ctx.fillRect(0, height - 6, sceneBarWidth, 6);
+      // Progress bar
+      ctx.fillStyle = 'rgba(244, 114, 182, 0.7)'; // Light pink bar
+      const barW = (width / totalScenes) * (sIdx + t);
+      ctx.fillRect(0, height - 6, barW, 6);
 
-      // Allow canvas to render frame
+      // Frame interval
       await new Promise((r) => setTimeout(r, 1000 / fps));
 
-      // Report progress
-      if (frame % 15 === 0) {
-        overallProgress = 10 + Math.floor(((sIdx + t) / totalScenes) * 85);
+      if (frame % 8 === 0) {
+        const overallPercent = 10 + Math.floor(((sIdx + t) / totalScenes) * 88);
         onProgress?.({
           currentScene: sIdx + 1,
           totalScenes,
-          progressPercent: overallProgress,
+          progressPercent: overallPercent,
           statusText: `Rendering scene ${sIdx + 1} of ${totalScenes}...`,
         });
       }
@@ -136,7 +133,7 @@ export async function renderStoryToVideo(
     currentScene: totalScenes,
     totalScenes,
     progressPercent: 100,
-    statusText: 'Encoding finished! Ready to download.',
+    statusText: 'Encoding finished! Video ready for download.',
   });
 
   return await recordingPromise;
@@ -258,17 +255,16 @@ function drawSubtitles(
   const boxY = h - boxHeight - 32;
 
   // Background pill
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.72)';
+  ctx.fillStyle = 'rgba(24, 10, 40, 0.82)';
   ctx.beginPath();
   ctx.roundRect(boxX, boxY, boxWidth, boxHeight, 16);
   ctx.fill();
 
-  // Subtle border glow
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = 'rgba(244, 114, 182, 0.35)';
+  ctx.lineWidth = 1.5;
   ctx.stroke();
 
-  // Subtitle text with soft shadow
+  // Subtitle text
   ctx.fillStyle = '#ffffff';
   ctx.shadowColor = 'rgba(0,0,0,0.8)';
   ctx.shadowBlur = 6;
@@ -280,4 +276,3 @@ function drawSubtitles(
 
   ctx.restore();
 }
-
