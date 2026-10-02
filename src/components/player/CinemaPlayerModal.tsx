@@ -354,3 +354,4 @@ export const CinemaPlayerModal: React.FC<CinemaPlayerModalProps> = ({
     </div>
   );
 };
+

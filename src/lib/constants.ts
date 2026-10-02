@@ -104,3 +104,4 @@ export const SAMPLE_PROMPTS = [
     style: 'habesha-3d' as const,
   },
 ];
+

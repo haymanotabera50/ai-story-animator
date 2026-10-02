@@ -29,21 +29,36 @@ export function generateImageUrl(
   const { width, height } = getResolutionForAspectRatio(aspectRatio);
   const effectiveSeed = seed ?? Math.floor(Math.random() * 999999);
   
-  // High quality Flux/SDXL model via Pollinations (instant, free, reliable)
-  const encoded = encodeURIComponent(fullPrompt);
-  return `https://image.pollinations.ai/prompt/${encoded}?width=${width}&height=${height}&seed=${effectiveSeed}&nologo=true&model=flux`;
+  // Truncate to prevent excessively long URLs
+  const cleanPrompt = fullPrompt.slice(0, 280);
+  const encoded = encodeURIComponent(cleanPrompt);
+  
+  // Fast, reliable image generation via Pollinations
+  return `https://image.pollinations.ai/prompt/${encoded}?width=${width}&height=${height}&seed=${effectiveSeed}&nologo=true`;
 }
 
 /**
- * Preloads an image into an HTMLImageElement to ensure smooth animation frames.
+ * Preloads an image into an HTMLImageElement with a timeout to prevent hanging.
  */
-export async function preloadImage(src: string): Promise<HTMLImageElement> {
+export async function preloadImage(src: string, timeoutMs: number = 8000): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    img.onload = () => resolve(img);
-    img.onerror = (err) => reject(err);
+
+    const timer = setTimeout(() => {
+      reject(new Error('Image preload timeout'));
+    }, timeoutMs);
+
+    img.onload = () => {
+      clearTimeout(timer);
+      resolve(img);
+    };
+
+    img.onerror = (err) => {
+      clearTimeout(timer);
+      reject(err);
+    };
+
     img.src = src;
   });
 }
-

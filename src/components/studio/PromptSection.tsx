@@ -211,3 +211,4 @@ export const PromptSection: React.FC<PromptSectionProps> = ({ onGenerate, isLoad
     </div>
   );
 };
+

@@ -57,3 +57,4 @@ export interface ArtStyleOption {
   previewImage: string;
   promptSuffix: string;
 }
+

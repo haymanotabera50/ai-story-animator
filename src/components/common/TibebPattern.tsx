@@ -19,3 +19,4 @@ export const TibebPattern: React.FC<{ className?: string }> = ({ className = '' 
     </div>
   );
 };
+

@@ -124,3 +124,4 @@ export const TimelineEditor: React.FC<TimelineEditorProps> = ({
     </div>
   );
 };
+

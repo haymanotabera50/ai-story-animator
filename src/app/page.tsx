@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Header } from '@/components/layout/Header';
 import { PromptSection } from '@/components/studio/PromptSection';
 import { TimelineEditor } from '@/components/studio/TimelineEditor';
+import { EmbeddedVideoPlayer } from '@/components/player/EmbeddedVideoPlayer';
 import { CinemaPlayerModal } from '@/components/player/CinemaPlayerModal';
 import { ExportModal } from '@/components/modals/ExportModal';
 import { SettingsModal } from '@/components/modals/SettingsModal';
@@ -25,7 +26,7 @@ const INITIAL_PROJECT: StoryProject = {
       title: 'The Highlands of Kaffa (የካፋ ተራሮች)',
       narration: 'Deep in the lush highland misty forests of ancient Kaffa, a young Ethiopian shepherd boy named Kaldi tended his herd beneath warm golden sunbeams.',
       visualPrompt: 'Establishing wide shot of a young Ethiopian boy shepherd wearing traditional white cotton Habesha tunic with colorful Tibeb borders, tending cute goats on lush green highland ridges of Kaffa, majestic misty Ethiopian mountains, golden hour sunlight, Pixar Disney 3D style',
-      imageUrl: 'https://image.pollinations.ai/prompt/Establishing%20wide%20shot%20of%20a%20young%20Ethiopian%20boy%20shepherd%20wearing%20traditional%20white%20cotton%20Habesha%20tunic%20with%20colorful%20Tibeb%20borders%2C%20tending%20cute%20goats%20on%20lush%20green%20highland%20ridges%20of%20Kaffa%2C%20majestic%20misty%20Ethiopian%20mountains%2C%20golden%20hour%20sunlight%2C%20Pixar%20Disney%203D%20style?width=1024&height=576&seed=71042&nologo=true&model=flux',
+      imageUrl: 'https://image.pollinations.ai/prompt/Establishing%20wide%20shot%20of%20a%20young%20Ethiopian%20boy%20shepherd%20wearing%20traditional%20white%20cotton%20Habesha%20tunic%20with%20colorful%20Tibeb%20borders%2C%20tending%20cute%20goats%20on%20lush%20green%20highland%20ridges%20of%20Kaffa%2C%20majestic%20misty%20Ethiopian%20mountains%2C%20golden%20hour%20sunlight%2C%20Pixar%20Disney%203D%20style?width=1024&height=576&seed=71042&nologo=true',
       motionType: 'zoom-in',
       duration: 5,
       soundtrackMood: 'tizita',
@@ -36,7 +37,7 @@ const INITIAL_PROJECT: StoryProject = {
       title: 'The Secret Red Berries (ቀያይ ፍሬዎች)',
       narration: 'Among the wild forest trees, he discovered mysterious bushes bearing bright crimson berries that sparkled like rubies in the morning light.',
       visualPrompt: 'Close up of a cute Ethiopian boy with expressive almond eyes gently holding branches of wild coffee trees with glowing vibrant red cherries, magical morning sunbeams illuminating the berries, Pixar 3D animated film render',
-      imageUrl: 'https://image.pollinations.ai/prompt/Close%20up%20of%20a%20cute%20Ethiopian%20boy%20with%20expressive%20almond%20eyes%20gently%20holding%20branches%20of%20wild%20coffee%20trees%20with%20glowing%20vibrant%20red%20cherries%2C%20magical%20morning%20sunbeams%20illuminating%20the%20berries%2C%20Pixar%203D%20animated%20film%20render?width=1024&height=576&seed=84912&nologo=true&model=flux',
+      imageUrl: 'https://image.pollinations.ai/prompt/Close%20up%20of%20a%20cute%20Ethiopian%20boy%20with%20expressive%20almond%20eyes%20gently%20holding%20branches%20of%20wild%20coffee%20trees%20with%20glowing%20vibrant%20red%20cherries%2C%20magical%20morning%20sunbeams%20illuminating%20the%20berries%2C%20Pixar%203D%20animated%20film%20render?width=1024&height=576&seed=84912&nologo=true',
       motionType: 'pan-right',
       duration: 5,
       soundtrackMood: 'tizita',
@@ -47,7 +48,7 @@ const INITIAL_PROJECT: StoryProject = {
       title: 'The Dance of Pure Joy (የፍስሐ ጭፈራ)',
       narration: 'After chewing the sweet cherries, the goats leaped and danced across the meadows with boundless joy, discovering the magical gift of Ethiopian coffee.',
       visualPrompt: 'Heartwarming playful scene of joyous goats dancing on their hind legs in a flowered Ethiopian mountain meadow with happy young Kaldi laughing, colorful wildflowers, soft sunset glow, Pixar 3D animation masterpiece',
-      imageUrl: 'https://image.pollinations.ai/prompt/Heartwarming%20playful%20scene%20of%20joyous%20goats%20dancing%20on%20their%20hind%20legs%20in%20a%20flowered%20Ethiopian%20mountain%20meadow%20with%20happy%20young%20Kaldi%20laughing%2C%20colorful%20wildflowers%2C%20soft%20sunset%20glow%2C%20Pixar%203D%20animation%20masterpiece?width=1024&height=576&seed=96321&nologo=true&model=flux',
+      imageUrl: 'https://image.pollinations.ai/prompt/Heartwarming%20playful%20scene%20of%20joyous%20goats%20dancing%20on%20their%20hind%20legs%20in%20a%20flowered%20Ethiopian%20mountain%20meadow%20with%20happy%20young%20Kaldi%20laughing%2C%20colorful%20wildflowers%2C%20soft%20sunset%20glow%2C%20Pixar%203D%20animation%20masterpiece?width=1024&height=576&seed=96321&nologo=true',
       motionType: 'zoom-out',
       duration: 6,
       soundtrackMood: 'tizita',
@@ -62,6 +63,9 @@ export default function HomePage() {
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [autoPlayTrigger, setAutoPlayTrigger] = useState(0);
+
+  const videoPlayerRef = useRef<HTMLDivElement>(null);
 
   const handleGenerateStory = async (
     prompt: string,
@@ -104,6 +108,13 @@ export default function HomePage() {
         scenes: data.story.scenes,
         createdAt: new Date().toISOString(),
       });
+
+      // Trigger automatic video playback and scroll to player
+      setAutoPlayTrigger((prev) => prev + 1);
+
+      setTimeout(() => {
+        videoPlayerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
     } catch (err: any) {
       console.error(err);
       setErrorMsg(err?.message || 'Something went wrong while generating the story.');
@@ -182,6 +193,19 @@ export default function HomePage() {
           )}
         </section>
 
+        {/* Embedded Video Screen: Plays immediately on generation */}
+        <section ref={videoPlayerRef}>
+          <EmbeddedVideoPlayer
+            scenes={project.scenes}
+            bgMusic={project.bgMusic}
+            title={project.title}
+            aspectRatio={project.aspectRatio}
+            onOpenCinema={() => setIsCinemaOpen(true)}
+            onOpenExport={() => setIsExportOpen(true)}
+            autoPlayTrigger={autoPlayTrigger}
+          />
+        </section>
+
         {/* Storyboard timeline & scene manager */}
         <section>
           <TimelineEditor
@@ -200,7 +224,7 @@ export default function HomePage() {
         </section>
       </main>
 
-      {/* Cinema theater player */}
+      {/* Cinema theater player modal */}
       <CinemaPlayerModal
         isOpen={isCinemaOpen}
         onClose={() => setIsCinemaOpen(false)}
