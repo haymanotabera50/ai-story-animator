@@ -4,12 +4,12 @@ import { createProceduralSceneSvg } from './visual-engine';
 export function getResolutionForAspectRatio(ratio: AspectRatio): { width: number; height: number } {
   switch (ratio) {
     case '9:16':
-      return { width: 576, height: 1024 };
+      return { width: 450, height: 800 };
     case '1:1':
-      return { width: 768, height: 768 };
+      return { width: 600, height: 600 };
     case '16:9':
     default:
-      return { width: 1024, height: 576 };
+      return { width: 800, height: 450 };
   }
 }
 
@@ -31,8 +31,8 @@ const STYLE_PROMPT_MODIFIERS: Record<ArtStyle, string> = {
 };
 
 /**
- * Generates a real, custom AI image tailored directly to the user's prompt using Pollinations AI (Sana / Flux).
- * 100% Free, zero cost, no stock photos, pure AI generation!
+ * Generates a real, custom AI image tailored directly to the user's prompt using Pollinations AI (Sana).
+ * Fast resolution (800x450) optimized for smooth, reliable web playback.
  */
 export function generateImageUrl(
   scenePrompt: string,
@@ -49,16 +49,16 @@ export function generateImageUrl(
     .replace(/[^\w\s,.-]/gi, ' ')
     .trim()
     .replace(/\s+/g, ' ')
-    .slice(0, 180);
+    .slice(0, 160);
 
   const fullVisualPrompt = `${cleanPrompt}, ${styleModifier}`;
   const encoded = encodeURIComponent(fullVisualPrompt);
 
-  return `https://image.pollinations.ai/prompt/${encoded}?width=${width}&height=${height}&seed=${effectiveSeed}&nologo=true&model=sana`;
+  return `https://image.pollinations.ai/prompt/${encoded}?width=${width}&height=${height}&seed=${effectiveSeed}&nologo=true`;
 }
 
 /**
- * Preloads an image into an HTMLImageElement with a 10-second timeout.
+ * Preloads an image into an HTMLImageElement with a 8-second timeout.
  * If network or CORS fails, gracefully falls back to a procedural scene SVG
  * so video rendering NEVER freezes or fails.
  */
@@ -66,14 +66,13 @@ export async function preloadImage(
   src: string,
   fallbackTitle: string = 'Scene',
   fallbackStyle: ArtStyle = 'habesha-3d',
-  timeoutMs: number = 10000
+  timeoutMs: number = 8000
 ): Promise<HTMLImageElement> {
   return new Promise((resolve) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
 
     const timer = setTimeout(() => {
-      // Fallback immediately to procedural SVG if remote image is too slow
       const fallbackSvg = createProceduralSceneSvg(fallbackTitle, '', fallbackStyle, 'zoom-in');
       const fallbackImg = new Image();
       fallbackImg.onload = () => resolve(fallbackImg);
