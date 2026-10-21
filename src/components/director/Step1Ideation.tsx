@@ -1,27 +1,38 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Sparkles, ArrowRight, Lightbulb, Bot, Check, Wand2 } from 'lucide-react';
+import { Sparkles, ArrowRight, Lightbulb, Bot, Check, Wand2, Zap, Play, Layers } from 'lucide-react';
 import { StoryAngle } from '@/types/director';
-import { SAMPLE_PROMPTS } from '@/lib/constants';
+import { ArtStyle } from '@/types/animation';
+import { SAMPLE_PROMPTS, ART_STYLES } from '@/lib/constants';
 
 interface Step1IdeationProps {
   initialPrompt: string;
   onSelectAngle: (angle: StoryAngle, prompt: string) => void;
+  onInstantGenerateVideo: (prompt: string, style: ArtStyle) => void;
   onBrainstorm: (prompt: string) => { directorGreeting: string; angles: StoryAngle[] };
 }
 
 export const Step1Ideation: React.FC<Step1IdeationProps> = ({
   initialPrompt,
   onSelectAngle,
+  onInstantGenerateVideo,
   onBrainstorm,
 }) => {
   const [prompt, setPrompt] = useState(initialPrompt || '');
+  const [selectedStyle, setSelectedStyle] = useState<ArtStyle>('habesha-3d');
   const [directorData, setDirectorData] = useState<{
     directorGreeting: string;
     angles: StoryAngle[];
   } | null>(() => (initialPrompt ? onBrainstorm(initialPrompt) : null));
   const [selectedAngleId, setSelectedAngleId] = useState<string>('angle-1');
+  const [isInstantGenerating, setIsInstantGenerating] = useState(false);
+
+  const handleInstantCreate = () => {
+    if (!prompt.trim()) return;
+    setIsInstantGenerating(true);
+    onInstantGenerateVideo(prompt.trim(), selectedStyle);
+  };
 
   const handleGenerateIdeas = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,8 +44,9 @@ export const Step1Ideation: React.FC<Step1IdeationProps> = ({
     }
   };
 
-  const handlePickInspiration = (p: string) => {
+  const handlePickInspiration = (p: string, st: ArtStyle) => {
     setPrompt(p);
+    setSelectedStyle(st);
     const res = onBrainstorm(p);
     setDirectorData(res);
     if (res.angles.length > 0) {
@@ -58,15 +70,15 @@ export const Step1Ideation: React.FC<Step1IdeationProps> = ({
               1
             </span>
             <h2 className="text-lg font-black text-purple-950 sm:text-xl">
-              Idea & Story Brainstorming (የሀሳብ ማመንጨት)
+              Describe Your Animation Video (የቪዲዮው ሀሳብ)
             </h2>
           </div>
           <p className="mt-1 text-xs font-medium text-purple-700/80">
-            Tell your AI Director what you want to animate. It will propose creative angles and narrative arcs for your video.
+            Enter any prompt or story idea. Click <strong>"Instant Create Video"</strong> to produce and play your video right away, or explore creative angles!
           </p>
         </div>
 
-        <form onSubmit={handleGenerateIdeas} className="space-y-4">
+        <form onSubmit={handleGenerateIdeas} className="space-y-5">
           <div className="relative">
             <textarea
               rows={3}
@@ -77,38 +89,81 @@ export const Step1Ideation: React.FC<Step1IdeationProps> = ({
             />
           </div>
 
+          {/* Quick Style Picker */}
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <label className="text-xs font-black uppercase tracking-wider text-purple-950">
+                Choose Art Style
+              </label>
+              <span className="text-[11px] font-bold text-pink-600">Active: {selectedStyle}</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
+              {ART_STYLES.map((st) => {
+                const isSelected = selectedStyle === st.id;
+                return (
+                  <button
+                    key={st.id}
+                    type="button"
+                    onClick={() => setSelectedStyle(st.id)}
+                    className={`rounded-xl border p-2 text-left transition-all ${
+                      isSelected
+                        ? 'border-pink-500 bg-pink-50 text-purple-950 font-bold ring-2 ring-pink-400/40 shadow-sm'
+                        : 'border-pink-100 bg-white/70 text-purple-800 hover:bg-pink-50/40'
+                    }`}
+                  >
+                    <span className="block text-xs truncate">{st.name}</span>
+                    <span className="block text-[10px] text-pink-600 font-serif truncate">
+                      {st.amharicName}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Inspiration chips */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 pt-1">
             <span className="flex items-center gap-1 text-xs font-bold text-pink-700">
               <Lightbulb className="h-3.5 w-3.5 text-pink-500" />
-              Inspirations:
+              Story Ideas:
             </span>
             {SAMPLE_PROMPTS.map((sample, idx) => (
               <button
                 key={idx}
                 type="button"
-                onClick={() => handlePickInspiration(sample.prompt)}
-                className="rounded-full border border-pink-200 bg-white px-3 py-1.5 text-xs font-semibold text-purple-800 shadow-sm transition-all hover:border-pink-400 hover:bg-pink-50 hover:text-purple-950"
+                onClick={() => handlePickInspiration(sample.prompt, sample.style)}
+                className="rounded-full border border-pink-200 bg-white px-3 py-1 text-xs font-semibold text-purple-800 shadow-sm transition-all hover:border-pink-400 hover:bg-pink-50 hover:text-purple-950"
               >
                 {sample.title}
               </button>
             ))}
           </div>
 
-          <div className="flex justify-end pt-2">
+          {/* Action buttons: 1-Click Instant Video vs Step-by-Step */}
+          <div className="flex flex-col gap-3 pt-3 sm:flex-row sm:items-center sm:justify-end">
             <button
               type="submit"
               disabled={!prompt.trim()}
-              className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-pink-500 via-purple-500 to-violet-600 px-6 py-3 text-sm font-black text-white shadow-lg shadow-purple-500/25 transition-all hover:opacity-95 hover:scale-[1.01] active:scale-[0.98] disabled:opacity-50"
+              className="flex items-center justify-center gap-2 rounded-2xl border border-pink-300 bg-white px-5 py-3 text-xs font-bold text-purple-900 shadow-sm transition-all hover:border-pink-400 hover:bg-pink-50 disabled:opacity-50"
             >
-              <Wand2 className="h-4 w-4" />
-              <span>Brainstorm Angles with AI Director</span>
+              <Wand2 className="h-4 w-4 text-purple-600" />
+              <span>Explore Story Angles & Customize (ደረጃ በደረጃ)</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleInstantCreate}
+              disabled={!prompt.trim() || isInstantGenerating}
+              className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-pink-500 via-purple-500 to-violet-600 px-7 py-3 text-sm font-black text-white shadow-xl shadow-purple-500/25 transition-all hover:opacity-95 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+            >
+              <Zap className="h-4 w-4 fill-white" />
+              <span>⚡ Instant Create Video (ቀጥታ ቪዲዮውን ፍጠር)</span>
             </button>
           </div>
         </form>
       </div>
 
-      {/* AI Director Response & 3 Pitches */}
+      {/* AI Director Response & 3 Pitches (when exploring step-by-step) */}
       {directorData && (
         <div className="space-y-5 rounded-3xl border border-purple-200 bg-gradient-to-br from-pink-50/80 via-white/90 to-purple-50/80 p-6 shadow-xl shadow-purple-500/5 backdrop-blur-xl sm:p-8">
           <div className="flex items-start gap-3 rounded-2xl border border-pink-200/80 bg-white/90 p-4 shadow-sm">
