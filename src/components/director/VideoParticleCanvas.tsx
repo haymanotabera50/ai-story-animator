@@ -141,3 +141,4 @@ export const VideoParticleCanvas: React.FC<VideoParticleCanvasProps> = ({ isPlay
     />
   );
 };
+
