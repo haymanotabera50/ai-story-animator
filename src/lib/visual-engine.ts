@@ -1,76 +1,4 @@
-import { ArtStyle, AspectRatio } from '@/types/animation';
-
-// High-speed, curated cinematic illustrations with full CORS compatibility
-const THEMATIC_VISUALS: Record<string, string[]> = {
-  coffee: [
-    'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=1024&q=80',
-    'https://images.unsplash.com/photo-1498804103079-a6351b050096?w=1024&q=80',
-    'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1024&q=80',
-  ],
-  mountain: [
-    'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1024&q=80',
-    'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1024&q=80',
-    'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=1024&q=80',
-  ],
-  castle: [
-    'https://images.unsplash.com/photo-1533158307587-828f0a76ef46?w=1024&q=80',
-    'https://images.unsplash.com/photo-1585543805890-6051f7829f98?w=1024&q=80',
-    'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1024&q=80',
-  ],
-  manuscript: [
-    'https://images.unsplash.com/photo-1544717305-2782549b5136?w=1024&q=80',
-    'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1024&q=80',
-    'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1024&q=80',
-  ],
-  nature: [
-    'https://images.unsplash.com/photo-1511497584788-87676104235f?w=1024&q=80',
-    'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1024&q=80',
-    'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1024&q=80',
-  ],
-  stars: [
-    'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=1024&q=80',
-    'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1024&q=80',
-    'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1024&q=80',
-  ],
-  habesha: [
-    'https://images.unsplash.com/photo-1544717305-2782549b5136?w=1024&q=80',
-    'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=1024&q=80',
-    'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=1024&q=80',
-  ],
-  cartoon: [
-    'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1024&q=80',
-    'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=1024&q=80',
-    'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1024&q=80',
-  ],
-};
-
-export function getCuratedSceneImage(
-  prompt: string,
-  style: ArtStyle,
-  orderIndex: number
-): string {
-  const lower = prompt.toLowerCase();
-  let pool: string[] = THEMATIC_VISUALS.habesha;
-
-  if (lower.includes('coffee') || lower.includes('kaldi') || lower.includes('berry') || lower.includes('goat')) {
-    pool = THEMATIC_VISUALS.coffee;
-  } else if (lower.includes('mountain') || lower.includes('simien') || lower.includes('highland') || lower.includes('ibex')) {
-    pool = THEMATIC_VISUALS.mountain;
-  } else if (lower.includes('castle') || lower.includes('gondar') || lower.includes('palace') || lower.includes('king')) {
-    pool = THEMATIC_VISUALS.castle;
-  } else if (lower.includes('manuscript') || lower.includes('parchment') || lower.includes('church') || lower.includes('biranna')) {
-    pool = THEMATIC_VISUALS.manuscript;
-  } else if (lower.includes('star') || lower.includes('sky') || lower.includes('night') || lower.includes('space')) {
-    pool = THEMATIC_VISUALS.stars;
-  } else if (style === 'pixar-3d' || style === 'comic-book') {
-    pool = THEMATIC_VISUALS.cartoon;
-  } else if (style === 'simien-folktale' || style === 'ghibli-anime') {
-    pool = THEMATIC_VISUALS.nature;
-  }
-
-  const selected = pool[orderIndex % pool.length] || pool[0];
-  return selected;
-}
+import { ArtStyle } from '@/types/animation';
 
 /**
  * Creates an instantaneous, beautiful SVG data-URI scene frame.
@@ -80,7 +8,7 @@ export function createProceduralSceneSvg(
   title: string,
   narration: string,
   style: ArtStyle,
-  motionType: string
+  _motionType: string
 ): string {
   const width = 1024;
   const height = 576;
@@ -97,67 +25,87 @@ export function createProceduralSceneSvg(
   };
 
   const [col1, col2, col3] = gradients[style] || gradients['habesha-3d'];
-  const safeTitle = escapeXml(title.slice(0, 35));
-  const safeSubtitle = escapeXml(narration.slice(0, 60) + '...');
+  const safeTitle = escapeXml(title.slice(0, 45));
+  const safeNarration = escapeXml(narration.slice(0, 90));
 
   const svg = `
-<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
-  <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${col1}" />
-      <stop offset="50%" stop-color="${col2}" />
-      <stop offset="100%" stop-color="${col3}" />
-    </linearGradient>
-    <radialGradient id="sun" cx="50%" cy="30%" r="50%">
-      <stop offset="0%" stop-color="#fff" stop-opacity="0.35" />
-      <stop offset="100%" stop-color="#fff" stop-opacity="0" />
-    </radialGradient>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="15" result="coloredBlur"/>
-      <feMerge>
-        <feMergeNode in="coloredBlur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
+    <defs>
+      <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="${col1}" />
+        <stop offset="50%" stop-color="${col2}" />
+        <stop offset="100%" stop-color="${col3}" />
+      </linearGradient>
+      <radialGradient id="sunGlow" cx="50%" cy="40%" r="50%">
+        <stop offset="0%" stop-color="#fef08a" stop-opacity="0.8" />
+        <stop offset="50%" stop-color="#fbbf24" stop-opacity="0.3" />
+        <stop offset="100%" stop-color="${col2}" stop-opacity="0" />
+      </radialGradient>
+      <linearGradient id="tibebPattern" x1="0" y1="0" x2="40" y2="0" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#f43f5e" />
+        <stop offset="33%" stop-color="#fbbf24" />
+        <stop offset="66%" stop-color="#10b981" />
+        <stop offset="100%" stop-color="#8b5cf6" />
+      </linearGradient>
+    </defs>
 
-  <!-- Background Base -->
-  <rect width="${width}" height="${height}" fill="url(#bg)" />
-  <rect width="${width}" height="${height}" fill="url(#sun)" />
+    <!-- Sky Background -->
+    <rect width="${width}" height="${height}" fill="url(#bgGrad)" />
 
-  <!-- Mountain Silhouettes -->
-  <path d="M0 450 Q 200 320, 450 420 T 900 360 L 1024 400 L 1024 576 L 0 576 Z" fill="#000" fill-opacity="0.35" />
-  <path d="M0 500 Q 300 390, 600 480 T 1024 460 L 1024 576 L 0 576 Z" fill="#000" fill-opacity="0.45" />
+    <!-- Radiant Sun / Aura -->
+    <circle cx="512" cy="240" r="220" fill="url(#sunGlow)" />
 
-  <!-- Ethiopian Lalibela Cross Embellishment in Center -->
-  <g transform="translate(480, 160)" fill="#ffffff" fill-opacity="0.25">
-    <path d="M30 4h4v6h-4z" />
-    <circle cx="32" cy="3" r="2" />
-    <path d="M29 10h6v12h12v6h-12v18h-6V28H17v-6h12V10z" />
-    <path d="M26 12h12v4H26z" />
-    <path d="M12 25h6v12h-6z" />
-    <path d="M46 25h6v12h-6z" />
-    <circle cx="32" cy="25" r="2" fill="#000" />
-  </g>
+    <!-- Distant Mountains Layer 1 -->
+    <path d="M0 430 Q 180 300, 360 410 T 720 370 T 1024 430 L 1024 576 L 0 576 Z" fill="rgba(15, 23, 42, 0.45)" />
 
-  <!-- Title & Chapter Overlay -->
-  <text x="512" y="290" text-anchor="middle" font-family="system-ui, sans-serif" font-size="34" font-weight="900" fill="#ffffff" filter="url(#glow)">${safeTitle}</text>
-  <text x="512" y="340" text-anchor="middle" font-family="system-ui, sans-serif" font-size="18" font-weight="500" fill="#fce7f3" fill-opacity="0.9">${safeSubtitle}</text>
-</svg>
-`;
+    <!-- Foreground Mountain Peaks Layer 2 -->
+    <path d="M0 480 Q 240 370, 512 470 T 1024 460 L 1024 576 L 0 576 Z" fill="rgba(15, 23, 42, 0.75)" />
 
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    <!-- Glowing Stars / Floating Coffee Embers -->
+    <circle cx="160" cy="120" r="3" fill="#fef08a" opacity="0.9" />
+    <circle cx="280" cy="80" r="2" fill="#ffffff" opacity="0.8" />
+    <circle cx="440" cy="140" r="4" fill="#fbbf24" opacity="0.85" />
+    <circle cx="700" cy="90" r="3.5" fill="#f43f5e" opacity="0.9" />
+    <circle cx="860" cy="130" r="2.5" fill="#fef08a" opacity="0.75" />
+    <circle cx="920" cy="70" r="3" fill="#ffffff" opacity="0.9" />
+
+    <!-- Central Lalibela Cross Emblem -->
+    <g transform="translate(512, 220) scale(0.95)" opacity="0.85">
+      <path d="M-6 -50 H6 V-20 H20 V-6 H50 V6 H20 V20 H6 V50 H-6 V20 H-20 V6 H-50 V-6 H-20 V-20 H-6 Z" fill="#fef08a" />
+      <circle cx="0" cy="0" r="12" fill="none" stroke="#fbbf24" stroke-width="3" />
+    </g>
+
+    <!-- Ethiopian Tibeb Border Accent at Bottom -->
+    <rect x="0" y="${height - 14}" width="${width}" height="14" fill="url(#tibebPattern)" />
+
+    <!-- Center Card Overlay -->
+    <rect x="180" y="320" width="664" height="150" rx="20" fill="rgba(15, 23, 42, 0.75)" stroke="rgba(244, 114, 182, 0.4)" stroke-width="2" />
+
+    <!-- Title -->
+    <text x="512" y="375" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="28" text-anchor="middle">
+      ${safeTitle}
+    </text>
+
+    <!-- Narration excerpt -->
+    <text x="512" y="420" fill="#fbcfe8" font-family="system-ui, -apple-system, sans-serif" font-weight="500" font-size="16" text-anchor="middle">
+      ${safeNarration}
+    </text>
+
+    <!-- Subtitle Branding -->
+    <text x="512" y="450" fill="#fbbf24" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="12" text-anchor="middle" letter-spacing="2">
+      AHADU ANIMATION STUDIO • አሐዱ
+    </text>
+  </svg>
+  `.trim();
+
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
 function escapeXml(unsafe: string): string {
-  return unsafe.replace(/[<>&'"]/g, (c) => {
-    switch (c) {
-      case '<': return '&lt;';
-      case '>': return '&gt;';
-      case '&': return '&amp;';
-      case '\'': return '&apos;';
-      case '"': return '&quot;';
-      default: return c;
-    }
-  });
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
 }

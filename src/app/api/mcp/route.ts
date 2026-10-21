@@ -315,3 +315,4 @@ export async function GET() {
     tools: MCP_TOOLS.map((t) => t.name),
   });
 }
+

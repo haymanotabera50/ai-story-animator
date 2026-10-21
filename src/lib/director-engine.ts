@@ -58,40 +58,41 @@ export function generateScriptFromAngle(
 ): FullStoryScript {
   const count = Math.min(Math.max(sceneCount, 3), 5);
   const baseSeed = Math.floor(Math.random() * 900000);
+  const cleanSubject = rawPrompt.trim();
 
   const sceneTemplates = [
     {
-      title: 'Act I: The Golden Dawn (መነሻ)',
-      narration: `Beneath skies brushed in rose and amber, ${rawPrompt.toLowerCase().replace(/^(a|an|the)\s+/i, '')}. What began as a peaceful morning was about to unveil a wondrous secret.`,
-      visualDirection: `Establishing cinematic wide shot, warm sunbeams illuminating traditional Habesha attire with vibrant woven Tibeb embroidery, tranquil highlands in the backdrop`,
+      title: 'Act I: The Awakening (መነሻ)',
+      narration: `Beneath skies brushed in rose and amber, ${cleanSubject.toLowerCase().replace(/^(a|an|the)\s+/i, '')}. What began as a peaceful dawn was about to unveil a wondrous journey.`,
+      visualDirection: `${cleanSubject}, establishing wide cinematic opening shot, beautiful vibrant morning lighting, animated cartoon, high detail`,
       cameraMotion: 'zoom-in' as CameraMotion,
       duration: 5,
     },
     {
-      title: 'Act II: The Hidden Calling (ጥሪው)',
-      narration: `Drawn by an ancient glow, our hero uncovered a path never walked before. Every whisper of the mountain breeze urged their heart forward with unshakable courage.`,
-      visualDirection: `Medium close-up shot, character eyes wide with awe, magical glowing particles reflecting upon their face, atmospheric morning mist`,
+      title: 'Act II: The Magical Discovery (ጥሪው)',
+      narration: `Drawn by a luminous glow, a breathtaking secret emerged. With wide eyes and a brave heart, our hero stepped into the unknown.`,
+      visualDirection: `${cleanSubject}, expressive character close-up shot, wide awe-filled eyes, floating glowing sparkles, emotional discovery, cinematic lighting`,
       cameraMotion: 'pan-right' as CameraMotion,
       duration: 5,
     },
     {
-      title: 'Act III: Soaring Horizons (ጀብዱ)',
-      narration: `With doubts left behind like autumn leaves, they took a breathtaking leap toward the stars. The world opened its arms in panoramic majesty.`,
-      visualDirection: `Dynamic low-angle action shot, soaring flight across towering cliffs and glowing canyons, vibrant colors, swirling wind effects`,
+      title: 'Act III: Soaring Heights (ጀብዱ)',
+      narration: `With doubts cast aside, a thrilling adventure took flight across soaring cliffs and radiant skies. The whole world danced with wonder.`,
+      visualDirection: `${cleanSubject}, dynamic high-action sequence, sweeping camera motion across stunning panoramic scenery, vibrant colors, wind effects`,
       cameraMotion: 'pan-up' as CameraMotion,
       duration: 6,
     },
     {
       title: 'Act IV: Eternal Harmony (ድልና ስምምነት)',
-      narration: `And as twilight bathed the earth in violet and starlight, laughter echoed across the horizon. True magic was never the destination, but the love shared along the journey.`,
-      visualDirection: `Golden hour master conclusion, warm embraces and joyous celebrations, silhouette against a stunning African sunset, serene starlight`,
+      narration: `As twilight bathed the horizon in gold and violet, joy filled the air. The story of ${cleanSubject.toLowerCase().replace(/^(a|an|the)\s+/i, '')} will shine forever in their hearts.`,
+      visualDirection: `${cleanSubject}, golden hour finale celebration, heartwarming triumph, glowing sunset colors, serene starlight, cinematic masterpiece`,
       cameraMotion: 'zoom-out' as CameraMotion,
       duration: 6,
     },
     {
-      title: 'Act V: The Living Legacy (ዘላለማዊ ተረት)',
-      narration: `From that day forth, the legend was etched into the songs of the elders and whispered to the night sky, forever shining in the heart of Ahadu.`,
-      visualDirection: `Star-filled twilight sky overview, twinkling constellations forming ancient symbols, peaceful glowing horizon`,
+      title: 'Act V: The Living Legend (ዘላለማዊ ተረት)',
+      narration: `From that day forth, the legend was etched into the songs of elders and whispered to the starlit night sky, shining forever in Ahadu.`,
+      visualDirection: `${cleanSubject}, star-filled twilight overview, glowing constellations, peaceful horizon, timeless folk legend`,
       cameraMotion: 'drift' as CameraMotion,
       duration: 5,
     },
@@ -129,12 +130,12 @@ export function refineScriptWithFeedback(
 ): FullStoryScript {
   const lower = instruction.toLowerCase();
 
-  const updatedScenes = current.scenes.map((sc, idx) => {
+  const updatedScenes = current.scenes.map((sc) => {
     let narration = sc.narration;
     if (lower.includes('funn') || lower.includes('playful')) {
-      narration = sc.narration.replace(/unshakeable courage|ancient glow/gi, 'unexpected giggles and clumsy steps');
+      narration = sc.narration.replace(/brave heart|luminous glow/gi, 'unexpected giggles and playful acrobatics');
     } else if (lower.includes('action') || lower.includes('dramatic')) {
-      narration = `With a thunderous heartbeat and blazing resolve, ${sc.narration}`;
+      narration = `With a thunderous roar and blazing courage, ${sc.narration}`;
     }
     return {
       ...sc,

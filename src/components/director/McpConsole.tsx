@@ -271,3 +271,4 @@ export const McpConsole: React.FC<McpConsoleProps> = ({ onVideoGeneratedByMcp })
     </div>
   );
 };
+

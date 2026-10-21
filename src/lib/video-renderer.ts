@@ -104,6 +104,9 @@ export async function renderStoryToVideo(
       // Vignette
       drawVignette(ctx, width, height);
 
+      // Atmospheric moving particles
+      drawAtmosphericParticles(ctx, width, height, t, sIdx);
+
       // Subtitles
       drawSubtitles(ctx, width, height, scene.narration, t);
 
@@ -274,5 +277,34 @@ function drawSubtitles(
     ctx.fillText(line, w / 2, textY);
   });
 
+  ctx.restore();
+}
+
+function drawAtmosphericParticles(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  t: number,
+  sceneIdx: number
+) {
+  ctx.save();
+  const particleCount = 25;
+  for (let i = 0; i < particleCount; i++) {
+    const seed = i * 137.5 + sceneIdx * 50;
+    const px = ((seed % w) + Math.sin(t * 4 + i) * 30 + w) % w;
+    const py = ((h - ((seed * 1.7) % h) - t * 120) + h) % h;
+    const radius = (seed % 3) + 1.5;
+    const alpha = 0.35 + Math.sin(t * 3 + i) * 0.25;
+
+    ctx.fillStyle =
+      i % 2 === 0
+        ? `rgba(254, 240, 138, ${Math.max(0.1, alpha)})`
+        : `rgba(244, 114, 182, ${Math.max(0.1, alpha)})`;
+    ctx.shadowColor = '#fbbf24';
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+    ctx.arc(px, py, radius, 0, Math.PI * 2);
+    ctx.fill();
+  }
   ctx.restore();
 }
